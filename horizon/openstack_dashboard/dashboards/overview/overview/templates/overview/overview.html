@@ -1,0 +1,614 @@
+{% load i18n horizon humanize sizeformat %}
+{% load branding i18n %}
+{% load staticfiles %}
+{% load context_selection %}
+<div class="overview_layout">
+
+    <div class="row well account">
+        <div style="margin-left:0px;float: left;">余额</div>
+        <div style="margin-left:2%;float: left">{{ balance }}</div>
+        <div id="guide_payment" style=" float: left;margin-left: 20px; "><a class="btn btn-primary" href="{%site_payment_url%}" target="_blank">充值</a></div>
+        <div style="float: left;margin-left: 20px;"><a class="btn btn-primary" href="{%site_billing_url%}&m=consumption">消费明细</a></div>
+
+        {#        <div class="pull-right order" style="margin-right:11%;">#}
+        {#            <span style="margin-right:20px">工单</span>#}
+        {#            <span style="margin-right:50px">1个{{ order_quantity }}</span>#}
+        {#            <span style="margin-right:20px">#}
+        {#                <a class="" style="color: #ccc; padding-right: 20px" href="#">全部工单</a>#}
+        {#                <a class="" style="color: #ccc" href="#">新建工单</a>#}
+        {#            </span>#}
+        {#        </div>#}
+    </div>
+
+    <style>
+        .consume .text-lable{ min-width: 260px; padding-right: 20px; text-align: left; display: inline-block}
+    </style>
+    <div class="row well consume">
+        {{ region_name }}每日资源消费: <span style="margin-left: 22px;margin-right: 10px;">{{ est_comsume_one_day }}</span>元/天
+        <div style="margin-top: 20px;">
+            <span class="text-lable" style="margin-left:0%; font-size: 12px;">云服务器 ({{ usage.limits.totalInstancesUsed }}台):<span style="margin-left: 22px;">{{ instance_fee }}元</span></span>
+            <span class="text-lable" style="margin-left:5%; font-size: 12px;">云硬盘 ({{ usage.limits.totalVolumesUsed }}个/{{ volume_size }}G):<span style="margin-left: 22px;">{{ volume_fee }}</span>元</span>
+            <span class="text-lable" style="margin-left:5%; font-size: 12px;">浮动IP({{ usage.limits.totalFloatingIpsUsed }}个):<span style="margin-left: 22px;">{{ fip_fee }}元</span></span>
+            <span class="text-lable" style="margin-left:5%; font-size: 12px;">CDN: <span style="margin-left: 22px;">{{ cdn_fee }}元</span></span>
+        <div>
+            <span class="text-lable" style="margin-left:0%; font-size: 12px;">路由器 <p style="margin-left: 12px;display: inline-block;">({{ usage.limits.totalRoutersUsed }}个):</p><span style="margin-left: 22px;">{{ router_fee }}元</span></span>
+            <span class="text-lable" style="margin-left:5%; font-size: 12px;">云快照 ({{ usage.limits.totalSnapshotsUsed }}个/{{ snapshot_size }}G):<span style="margin-left: 22px;">{{ snapshot_fee }}元</span></span>
+            <span class="text-lable" style="margin-left:5%; font-size: 12px;">带宽<p style="margin-left: 12px;display: inline-block;">({{ bandwidth_count }}M):</p><span style="margin-left: 22px;">{{ bandwidth_fee }}元</span></span>
+        </div>
+{#            <span class="text-lable" style="margin-left:5%; font-size: 12px;">VPN<p style="margin-left: 15px;display: inline-block;">({{ vpn_count }}个):</p><span style="margin-left: 22px;">{{ vpn_fee }}元</span></span>#}
+
+        </div>
+
+
+
+
+    </div>
+</div>
+<div class="row" style="overflow: hidden; margin-top: 20px;">
+        <div class="pull-left quota" style="background-color: #fff;width: 65%;">
+            <div class="well" style="background-color: #fff;">
+                <p style="font-size: 16px;">
+                    配额使用情况
+                    {#                    <a class="btn btn-default pull-right" style="color: #fff; padding: 2px 6px;" href="#">申请配额</a>#}
+                </p>
+
+                <div style="border-bottom: #e6e6e6 dotted 1px;margin: 25px 0; "></div>
+                <div class="col-sm-4" style="width: 45%">
+                    <div>
+                        <div class="row">
+                            <h4 class=" icon-host">{% trans "Instances" %}</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">云服务器（台）</div>
+                            <div class="col-sm-7">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalInstancesUsed }}" aria-valuemin="0"
+                                         aria-valuemax="{{ usage.limits.maxTotalInstances }}"
+                                         style="width: {% quotapercent usage.limits.totalInstancesUsed usage.limits.maxTotalInstances %}%;"
+                                         title="{{ usage.limits.totalInstancesUsed }}/{{ usage.limits.maxTotalInstances }}台">
+                                        {#                                        {% quotapercent usage.limits.totalInstancesUsed usage.limits.maxTotalInstances %}%#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">CPU（核）</div>
+                            <div class="col-sm-7">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalCoresUsed }}" aria-valuemin="0"
+                                         aria-valuemax="{{ usage.limits.maxTotalCores }}"
+                                         style="width: {% quotapercent usage.limits.totalCoresUsed usage.limits.maxTotalCores %}%;"
+                                         title="{{ usage.limits.totalCoresUsed }}/{{ usage.limits.maxTotalCores }}核">
+                                        {#                                        {% quotapercent usage.limits.totalCoresUsed usage.limits.maxTotalCores %}%#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">内存（G）</div>
+                            <div class="col-sm-7">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalRAMUsed }}|to_gb" aria-valuemin="0"
+                                         aria-valuemax="{{ usage.limits.maxTotalRAMSize }}|to_gb"
+                                         style="width: {% quotapercent usage.limits.totalRAMUsed usage.limits.maxTotalRAMSize %}%;"
+                                         title="{{ usage.limits.totalRAMUsed|to_gb }}/{{ usage.limits.maxTotalRAMSize|to_gb }}G">
+                                        {#                                        {% quotapercent usage.limits.totalRAMUsed usage.limits.maxTotalRAMSize %}%#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="row">
+                            <h4 class="icon-disk">{% trans "Storage" %}</h4>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">云硬盘（块）</div>
+                            <div class="col-sm-7">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalVolumesUsed }}" aria-valuemin="0"
+                                         aria-valuemax="{{ usage.limits.maxTotalVolumes }}"
+                                         style="width: {% quotapercent usage.limits.totalVolumesUsed usage.limits.maxTotalVolumes %}%;"
+                                         title="{{ usage.limits.totalVolumesUsed }}/{{ usage.limits.maxTotalVolumes }}个">
+                                        {#                                        {% quotapercent usage.limits.totalVolumesUsed usage.limits.maxTotalVolumes %}%#}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">快照（个）</div>
+                            <div class="col-sm-7">
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalSnapshotsUsed }}" aria-valuemin="0"
+                                         aria-valuemax="{{ usage.limits.maxTotalSnapshots }}"
+                                         style="width: {% quotapercent usage.limits.totalSnapshotsUsed usage.limits.maxTotalSnapshots %}%;"
+                                         title="{{ usage.limits.totalSnapshotsUsed }}/{{ usage.limits.maxTotalSnapshots }}个">
+                                        {#                                        {% quotapercent usage.limits.totalSnapshotsUsed usage.limits.maxTotalSnapshots %}%#}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-5">云硬盘总容量（G）</div>
+                            <div class="col-sm-7">
+
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalVolumeGigabytesUsed }}" aria-valuemin="0"
+                                         aria-valuemax=""
+                                         style="width: {% quotapercent usage.limits.totalVolumeGigabytesUsed usage.limits.maxTotalVolumeGigabytes %}%;"
+                                         title="{{ usage.limits.totalVolumeGigabytesUsed }}/{{ usage.limits.maxTotalVolumeGigabytes }}G">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5">快照总容量（G）</div>
+                            <div class="col-sm-7">
+
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar"
+                                         aria-valuenow="{{ usage.limits.totalSnapshotGigabytesUsed }}" aria-valuemin="0"
+                                         aria-valuemax=""
+                                         style="width: {% quotapercent usage.limits.totalSnapshotGigabytesUsed usage.limits.maxTotalSnapshotGigabytes %}%;"
+                                         title="{{ usage.limits.totalSnapshotGigabytesUsed }}/{{ usage.limits.maxTotalSnapshotGigabytes }}G">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4" style="margin-left: 10px; width: 53%">
+                    <div>
+                        <h4 class="icon-network">{% trans "Network" %}</h4>
+                    </div>
+                    <div class="">
+                        <div class="col-sm-5">浮动IP（个）</div>
+                        <div class="col-sm-7">
+                            <div class="progress">
+                                <div class="progress-bar" data-toggle="popover"
+                                     data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."
+                                     role="progressbar" aria-valuenow="{{ usage.limits.totalFloatingIpsUsed }}"
+                                     aria-valuemin="0" aria-valuemax="{{ usage.limits.maxTotalFloatingIps }}"
+                                     style="width: {% quotapercent usage.limits.totalFloatingIpsUsed usage.limits.maxTotalFloatingIps %}%;"
+                                     title="{{ usage.limits.totalFloatingIpsUsed }}/{{ usage.limits.maxTotalFloatingIps }}个">
+                                    {#                                    {% quotapercent usage.limits.totalFloatingIpsUsed usage.limits.maxTotalFloatingIps %}%#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {#                    <div class="">#}
+                    {#                        <div class="col-sm-5">带宽（M）</div>#}
+                    {#                        <div class="col-sm-7">#}
+                    {#                            <div class="progress">#}
+                    {#                                <div class="progress-bar" role="progressbar" aria-valuenow="{{usage.limits.totalBandwidthsUsed}}" aria-valuemin="0" aria-valuemax="{{usage.limits.maxBandwidths}}" style="width: {% quotapercent usage.limits.totalBandwidthsUsed usage.limits.maxBandwidths %}%;"#}
+                    {#                                     title="{{usage.limits.totalBandwidthsUsed}}/{{usage.limits.maxBandwidths}}M">#}
+                    {#                                    {% quotapercent usage.limits.totalBandwidthsUsed usage.limits.maxBandwidths %}%#}
+                    {#                                </div>#}
+                    {#                            </div>#}
+                    {#                        </div>#}
+                    {#                    </div>#}
+                    <div class="">
+                        <div class="col-sm-5">网络（个）</div>
+                        <div class="col-sm-7">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuenow="{{ usage.limits.totalNetworksUsed }}" aria-valuemin="0"
+                                     aria-valuemax="{{ usage.limits.maxNetworks }}"
+                                     style="width: {% quotapercent usage.limits.totalNetworksUsed usage.limits.maxNetworks %}%;"
+                                     id="network"
+                                     title="{{ usage.limits.totalNetworksUsed }}/{{ usage.limits.maxNetworks }}个">
+                                    {#                                    {% quotapercent usage.limits.totalNetworksUsed usage.limits.maxNetworks %}%#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=" ">
+                        <div class="col-sm-5">路由器（个）</div>
+                        <div class="col-sm-7">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuenow="{{ usage.limits.totalRoutersUsed }}" aria-valuemin="0"
+                                     aria-valuemax="{{ usage.limits.maxRouters }}"
+                                     style="width: {% quotapercent usage.limits.totalRoutersUsed usage.limits.maxRouters %}%;"
+                                     title="{{ usage.limits.totalRoutersUsed }}/{{ usage.limits.maxRouters }}个">
+                                    {#                                    {% quotapercent usage.limits.totalRoutersUsed usage.limits.maxRouters %}%#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <div class="col-sm-5">负载均衡（个）</div>
+                        <div class="col-sm-7">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar"
+                                     aria-valuenow="{{ usage.limits.totalLoadbalancersUsed }}" aria-valuemin="0"
+                                     aria-valuemax="{{ usage.limits.maxLoadbalancers }}"
+                                     style="width: {% quotapercent usage.limits.totalLoadbalancersUsed usage.limits.maxLoadbalancers %}%;"
+                                     title="{{ usage.limits.totalLoadbalancersUsed }}/{{ usage.limits.maxLoadbalancers }}个">
+                                    {#                                    {% quotapercent usage.limits.totalLoadbalancersUsed usage.limits.maxLoadbalancers %}%#}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right init" style="background-color: #fff;width: 32%;">
+            <div class="row" style="margin: 15px 0;">
+                <div class="col-sm-5" style="padding-left: 20px">
+                    <p style="font-size: 16px;">初始化</p>
+                </div>
+
+                <div class="col-sm-7 net_init_label">
+                    <label class="btn btn-primary">网络未进行初始化，无法创建云计算资源！</label>
+                </div>
+            </div>
+            <div style="border-bottom: #e6e6e6 dotted 1px;margin: -10px 25px 25px 25px;"></div>
+            <div class="row network" style="padding-left: 25px; padding-right:50px;">
+                <div class="col-sm-2">
+                    <h4></h4>
+                </div>
+                <div class="col-sm-5">
+                    <a class="btn btn-light ajax-modal btn-block" id="guide_initnet"
+                       href="{% url 'horizon:overview:overview:initnet' %}">网络一键部署</a>
+                </div>
+                <div class="col-sm-5">
+                    <input id="vpn_init" type="hidden" value="{{ vpn_init }}"/>
+                    <a class="btn btn-light ajax-modal btn-block"
+                       href="{% url 'horizon:overview:overview:initvpn' %}">VPN一键部署</a>
+                </div>
+            </div>
+            <div class="row security" style="padding-left: 25px; padding-right:50px;">
+                <div class="col-sm-2">
+                    <h4></h4>
+                </div>
+                <div class="col-sm-5">
+                    <input id="firewall_init" type="hidden" value="{{ firewall_init }}"/>
+                    <a class="btn btn-light ajax-modal btn-block" id="guide_firewall"
+                       href="{% url 'horizon:overview:overview:initfirewall' %}">防火墙一键部署</a>
+                </div>
+                <div class="col-sm-5">
+                    <input id="keypair_init" type="hidden" value="{{ keypair_init }}"/>
+                    <a class="btn btn-light ajax-modal btn-block"
+                       href="{% url 'horizon:security:keypairs:create' %}">创建安全密钥</a>
+                </div>
+            </div>
+            <div class="row instance" style="padding-left: 25px; padding-right:50px;">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-5">
+                    <a class="btn btn-light ajax-modal btn-block" id="guide_instance"
+                       href="{% url 'horizon:instances:instances:launch' %}">创建云服务器</a>
+                </div>
+                <div class="col-sm-5">
+                    <a class="btn btn-light ajax-modal btn-block"
+                       href="{% url 'horizon:network:loadbalancers:addloadbalander' %}">创建负载均衡器</a>
+                </div>
+            </div>
+
+
+            <div class="row" style="padding-left: 25px; padding-right:50px;">
+                <div class="col-sm-2">
+                </div>
+                <div class="col-sm-10">
+                    <a class="btn btn-default ajax-modal btn-block btn-danger"
+                       style="border:1px solid #e6e6e6; background-color: #fff; color: #666; font-size: 12px;"
+                       href="{% url 'horizon:overview:overview:destroy' %}"> {% trans "Destroy all resources" %}</a>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+<div id="first" class="model">
+<div style="z-index: 999;position: relative;left: -200px;top: -100px; ">
+<img  src="{% static 'dashboard/images/lead_one.png' %}" >
+<button onclick="do_next()" style="float: left;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;margin-left: 85px;"></button>
+</div>
+</div>
+<div id="second" class="model" style="width: 260px;">
+<div style="z-index: 999;position: relative;left: -200px;top: -200px;">
+<img  src="{% static 'dashboard/images/lead_two.png' %}" >
+<button onclick="do_next()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;"></button>
+<button onclick="do_prec()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_previous.png' %}');background-size:80px 28px;width:80px;height: 28px; margin-right: 10px"></button>
+</div>
+
+</div>
+<div id="three" class="model">
+<div style="z-index: 999;position: relative;left: -200px;top: -300px;">
+<img  src="{% static 'dashboard/images/lead_three.png' %}" >
+<button onclick="do_next()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;"></button>
+<button onclick="do_prec()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_previous.png' %}');background-size:80px 28px;width:80px;height: 28px; margin-right: 10px"></button>
+</div>
+</div>
+<div id="four" class="model">
+<div style="z-index: 999;position: relative;left: -200px;top: -300px;">
+<img  src="{% static 'dashboard/images/lead_four.png' %}" >
+<button onclick="do_next()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;"></button>
+<button onclick="do_prec()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_previous.png' %}');background-size:80px 28px;width:80px;height: 28px; margin-right: 10px"></button>
+</div>
+</div>
+<div id="five" class="model">
+<div style="z-index: 999;position: relative;left: -200px;top: -300px;">
+<img  src="{% static 'dashboard/images/lead_five.png' %}" >
+<button onclick="do_next()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;"></button>
+<button onclick="do_prec()" style="float: right;border:none;background:url('{% static 'dashboard/images/welcom_previous.png' %}');background-size:80px 28px;width:80px;height: 28px; margin-right: 10px"></button>
+</div>
+</div>
+<div id="six" class="model">
+<div style="z-index: 999;position: relative;left: -200px;top: -50px;">
+<img  src="{% static 'dashboard/images/lead_six.png' %}" >
+<button onclick="do_prec()" style="position: relative;border:none;background:url('{% static 'dashboard/images/welcom_previous.png' %}');background-size:80px 28px;width:80px;height: 28px; margin-right: 10px;left: 90px;"></button>
+<button onclick="do_next()" style="position: relative;border:none;background:url('{% static 'dashboard/images/welcom_next.png' %}');background-size:80px 28px;width:80px;height: 28px;left: 90px;"></button>
+</div>
+</div>
+
+<div id="balance_credit" class="model" style="height:220px;width: 470px">
+<div style="z-index: 999;position: relative;padding-left: 10px;padding-top: 20px;">
+<img  src="{% static 'dashboard/images/welcome_girl.png' %}" style="float: left">
+<div style="float: left;text-align:left;padding-left: 20px;">
+<h4>欢迎来到犀思云</h4>
+如需使用请先充值；
+<br>
+如需人工服务，请拨打全国客户服务热线:4008-166620；
+<br>
+<a href="http://www.syscloud.cn/help/zhinan/account/" style="color: #E69100;" target="_blank">计费规则说明？</a>
+</div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div style="padding-left: 100px;">
+<button onclick="do_balance_next()"style="float: left; border:none;background:url('{% static 'dashboard/images/welcom_close2.png' %}');background-size:80px 28px;width:80px;height: 28px;"></button>
+</div>
+</div>
+
+<style>
+
+    .init .security .col-sm-5 .btn-light,.init .instance .col-sm-5 .btn-light {color: #666; padding: 9px 0px 9px 0px;}
+    .col-sm-7.net_init_label{
+            width: 100%;
+    }
+    
+    .init .network .col-sm-5 .btn-light:hover, .init .network .col-sm-5 .btn-light:active{
+        color: #666;
+    }
+
+   .network a:link{color:#666;}
+   .model{  
+            position: absolute; z-index: 100;   
+            width:240px; height:50px;   
+            background-color:#FFF; display: none;
+            filter:alpha(opacity=100); 
+			-moz-opacity:1; 
+			opacity:1; 
+        }
+   
+</style>
+
+
+<script>
+    /*
+     if have network, disable the button.
+     */
+    //左右高度设置
+    init_height();
+    function letDivCenter(divName){   
+        var top = ($(window).height() - $(divName).height())/2;   
+        var left = ($(window).width() - $(divName).width())/2;   
+        var scrollTop = $(document).scrollTop();   
+        var scrollLeft = $(document).scrollLeft();   
+        $(divName).css( { position : 'absolute', 'top' : top + scrollTop, left : left + scrollLeft } ).fadeIn();  
+    }
+    var guide;
+    function do_guide() {
+    	$(".topbar").css("position","static");
+    	//$(".toggle").css("position","static");
+    	//$("#pma_navigation").css("position","static");
+	    guide = $.guide({
+			actions: [
+				{
+					element: $('#guide_initnet'),
+					content: '',
+					offsetX: -140,
+					offsetY: 60,
+					beforeFunc: function(g) {
+						$("#second").fadeOut()
+						letDivCenter('#first');
+					}
+				},{
+					element: $('#guide_firewall'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#first").fadeOut();
+						$("#three").fadeOut();
+						letDivCenter('#second');
+					}
+				},{
+					element: $('#guide_instance'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#second").fadeOut();
+						$("#four").fadeOut();
+						letDivCenter('#three');
+					}
+				},{
+					element: $('#guide_instance'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#three").fadeOut();
+						$("#five").fadeOut();
+						letDivCenter('#four');
+					}
+				},{
+					element: $('#guide_instance'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#four").fadeOut();
+						$("#six").fadeOut();
+						letDivCenter('#five');
+					}
+				},{
+					element: $('#help_workorder'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#five").fadeOut();
+						letDivCenter('#six');
+					}
+				},{
+					element: $('#guide_payment'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#six").fadeOut();
+					}
+				}
+				]
+	    });
+    }
+    
+    var guide_balance;
+    function do_balance_credit(){
+    	guide_balance = $.guide({
+			actions: [
+				{
+					element: $('#guide_payment'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						letDivCenter("#balance_credit")
+					}
+				},
+				{
+					element: $('#guide_payment'),
+					content: '',
+					offsetX: 0,
+					offsetY: 50,
+					//isBeforeFuncExec: true,
+					beforeFunc: function(g) {
+						$("#balance_credit").fadeOut();
+					}
+				}
+				]
+	    });
+    }
+    
+    function do_prec(){
+    	if (guide.step.current === 0)
+    		return	
+    	guide.back()
+    }
+    function do_next(){
+    	if (guide.step.current + 1 === guide.actionList.length){
+    		$("#six").fadeOut();
+    	} 
+    	guide.next()
+    }
+    function do_balance_next(){
+    	guide_balance.next()
+    }
+    
+    function balance_credit(){
+    	do_balance_credit()
+    }
+    $(document).ready(function () {
+        var have_routers = {{ have_routers }};
+        var isSubUser='{% isSubUser %}';
+        if(isSubUser!='True'){
+        }else{
+        	$("#guide_payment").hide();
+        }
+        if ($("#network").attr('aria-valuenow') != "0" || have_routers) {
+            $('a[href*="initnet"]').addClass("disabled");
+            $('.net_init_label').addClass("hidden");
+        } else {
+            $('a[href*="initvpn"]').addClass("disabled");
+            $('a[href*="initfirewall"]').addClass("disabled");
+            $('a[href*="launch"]').addClass("disabled");
+            $('a[href*="addloadbalander"]').addClass("disabled");
+        }
+
+        // when vpn firewall already init,disable the button
+        if ($("#vpn_init").attr("value") != "0") {
+            $('a[href*="initvpn"]').addClass("disabled");
+        }
+        if ($("#firewall_init").attr("value") != "0") {
+            $('a[href*="initfirewall"]').addClass("disabled");
+        }
+        if ($("#keypair_init").attr("value") != "0") {
+            $('a[href*="create"]').addClass("disabled");
+        }
+        var account_is_frozen = {{ account_is_frozen }};
+        if (account_is_frozen){
+          if(isSubUser !='True'){
+        	  $('.net_init_label').children(0).html('<div> 账户已透支，请先 <a class="pay_bt" href="{% site_payment_url %}" target="_blank">充值</div>');
+          }else{
+        	  $('.net_init_label').children(0).html('<div> 账户已透支.</div>'); 
+          }
+          $('.net_init_label').removeClass("hidden");
+          $('a[href*="initnet"]').addClass("disabled");
+          $('a[href*="initvpn"]').addClass("disabled");
+          $('a[href*="launch"]').addClass("disabled");
+        }
+        // tip when mouse on the progress
+        $(".well .progress").hover(function () {
+                    //当鼠标放上去的时候,程序处理
+                    $(this).find('.progress-bar').tooltip("show");
+                },
+                function () {
+                    //当鼠标离开的时候,程序处理
+                    $('.progress-bar').tooltip("hide");
+                }
+        )
+        {% if login_last %}
+        	if({{ balance_ceditline }}<=0)
+        		if(isSubUser!='True'){
+        			balance_credit()
+        		}
+        {% else %}
+        	do_guide()
+        {% endif %}
+    });
+    function init_height() {
+        var left = $(".quota").height();
+        var right = $(".init").height();
+        if (left > right) {
+            $(".init").height(left);
+        } else if (right > left) {
+            $(".quota").height(right);
+        }
+    }
+</script>
+

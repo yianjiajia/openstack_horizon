@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="tab-pane fade in active" id="Monitor_chart">
+            <button class="alert alert-info ">{% trans 'This month the total flow'%}：<strong><span id="total_flow"></span></strong>GB</button>
+             <div>
+                 <span style="padding:1% 0.5%;"><label>{% trans 'Monitoring index'%}</label></span>
+                        <span style="padding:1% 0.5%;"><select id="select1" name="monitor">
+                            <option value ="flow">{% trans 'Flow Monitoring'%}</option>
+                              <option value ="io">{% trans 'IO Monitoring'%}</option>
+                                <option value ="requests">{% trans 'Requests Monitoring'%}</option>
+                             </select></span>
+                    <span style="padding:1% 0.5%;"><label>{% trans 'Domain Select'%}</label>
+                            </span>
+                            <select id="select2" name="domain">
+                                        {% for i in domain %}
+                                        <option value ="{{ i.domain_name }}">{{ i.domain_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                            <div class="pull-right">{% include "cdn/cdn.cdn_monitor_report/_usage_summary.html" %}</div><hr style="margin-top: 22px;">
+
+                        <div id="chart" style="min-width:300px;height:400px"></div>
+             </div>
+              </div>

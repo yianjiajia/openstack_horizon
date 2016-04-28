@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% block title %}{% trans workflow.name %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=workflow.name %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include 'instances/instances/_workflow.html' %}
+{% endblock %}

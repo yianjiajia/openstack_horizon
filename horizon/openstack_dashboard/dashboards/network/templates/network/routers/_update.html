@@ -1,0 +1,53 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "You may update the editable properties of your router here"%}.<br/>{% trans "Bandwidth can only be updated once per hour" %}.</p>
+  <p>带宽最大上限: 20M。如需更大带宽，请联系客服人员</p>
+{% endblock %}
+{% block modal-js %}
+  <script type="text/javascript">
+    $(function () {
+      var billing;
+      var url = window.location.pathname;
+      var real_url;
+      if (url.split("/")[1] == 'dashboard') {
+        real_url = "/dashboard"
+      }
+      else {
+        real_url = ""
+      }
+      $.get(real_url + "/instances/api?billing_item=billing_item", function (data) {
+        data_json = eval('(' + data + ')');
+        billing = data_json;
+        set_price();
+
+        $('#id_bandwidth').keyup(function () {
+          set_price();
+        });
+        $('#id_bandwidth').click(function () {
+          set_price();
+        });
+
+        function set_price() {
+          $(".not_make_sense").hide();
+          var router_unit = billing.router_1;
+          var bandwidth_unit = billing.bandwidth_1_M;
+          var count = $("#id_bandwidth").val();
+          if ("" == count.trim()) {
+            hour_fee = 0.0;
+            month_fee = 0.0;
+          } else {
+            hour_fee = (router_unit + parseInt(count) * bandwidth_unit);
+            month_fee = horizon.modals.get_mon_price(hour_fee);
+          }
+          $(".price #price").text(hour_fee.toFixed(4));
+          $(".small-price #mon_price").text(month_fee);
+      $("#total_fee").append("<div class='not_make_sense'>  路由: "+ "<span class='price'> "+ router_unit + "</span>"   + " 元/个/时</div><div  class='not_make_sense'>  带宽: " +  "<span class='price'>" + bandwidth_unit + "</span>" + " 元/M/时</div>")
+        }
+      })
+    });
+
+  </script>
+{% endblock %}

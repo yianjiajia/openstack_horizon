@@ -1,0 +1,22 @@
+{% load i18n sizeformat %}
+<div class="col-sm-12 form-inline">
+  <form action="?" method="get">
+       <div class="form-group">
+      {{domain_from.as_table}}
+       </div>
+    <div class="pull-right">
+      <div class="datepicker form-group">
+      {% blocktrans with start=form.start %}
+      <label>From:</label> {{ start }}{% endblocktrans %}
+    </div>
+    <div class="datepicker form-group">
+      {% blocktrans with end=form.end %}
+      <label>To:</label>{{ end }}{% endblocktrans %}
+    </div>
+    <button class="btn btn-primary" type="submit" style="  margin-bottom: 0px;margin-left: 20px;padding: 2px 8px;">{% trans "Submit" %}</button>
+  </div>
+  </form>
+</div>
+<div>
+  {{ table.render }}
+   </div>

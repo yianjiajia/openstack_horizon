@@ -1,0 +1,126 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Edit the user's details, including the Primary Project." %}</p>
+  <script type="text/javascript">
+    if (typeof horizon.user !== 'undefined') {
+      horizon.user.init();
+    } else {
+      addHorizonLoadEvent(function () {
+        horizon.user.init();
+      });
+    }
+
+    var safeToken = $("#id_safeCard").val();
+    var real_url = get_url();
+    var icon = "<i class='fa fa-times-circle font-size14'></i>";
+
+    function get_url() {
+      var url = window.location.pathname;
+      real_url = "/";
+      if (url.split("/")[1] == 'dashboard') {
+        real_url = "/dashboard/"
+      }
+      return real_url;
+    }
+
+    function ErrorInput(id, error) {
+      id_error = "#" + id + "Error";
+      obj = $(id_error);
+      obj.html(icon + error);
+      obj.parent().parent().addClass('has-error')
+      obj.show();
+    }
+
+    //del error
+    function ErrorDel(items) {
+      obj = $("#" + items + "Error")
+      obj.html('');
+      obj.parent().parent().removeClass('has-error')
+      obj.hide();
+    }
+    var fromError = {
+      'inputUsername': {
+        'empty': '用户名不能为空哦~',
+        'nolen': '用户名长度为 4-20 位',
+        'nopoint': '用户名禁用 . 符号',
+        'notype': '用户名格式错误',
+        'exsit': '用户名已注册'
+      },
+      'inputEmail': {'empty': '邮箱不能为空哦~', 'notype': '邮箱格式错误', 'exsit': '邮箱已注册'},
+      'password': {'empty': '密码不能为空哦~', 'nolen': '密码长度为 6-14 位', 'noblank': '密码禁用空格', 'notype': '密码格式错误哦~'},
+      'repassword': {'empty': '确认密码不能为空', 'nosame': '两次输入的密码不同'},
+      'mobile': {'empty': '手机不能为空', 'notype': '手机格式错误', 'exsit': '手机已注册'},
+      'mobile_yzm': {'empty': '手机验证码不能为空', 'nosame': '手机验证码错误'},
+      'compName': {'empty': '公司名不能为空'},
+      'industry': {'empty': '行业不能为空'},
+      'agreenment': {'empty': '请接受Syscloud协议！'}
+    };
+
+    function checkuser(param, items) {
+      if (param != '') {
+        param += "&inputsafeToken=" + safeToken
+        $.get(real_url + "member/checkUser/?" + param, function (data) {
+
+          if (data == 'Exist') {
+            if (items == "inputUsername") {
+              alert('用户名已存在！');
+            } else if (items == "inputEmail") {
+              alert('邮箱已存在！');
+            } else if (items == "mobile") {
+              alert('手机已存在！');
+            }
+            return true;
+          } else if (data == 'limitVisit') {
+            ErrorInput(items, '非法的访问');
+            return true;
+          }
+          else if (data == 'safeTokenTimeout') {
+            ErrorInput(items, '安全验证失效,请重新刷新注册页面');
+            return true;
+          } else if (data == 'safeTokenError') {
+            ErrorInput(items, '安全验证失败,请重新刷新注册页面');
+            return true;
+          }
+          else {
+            ErrorDel(items)
+            return false;
+          }
+        })
+      }
+    }
+    var param = '';
+    var items = '';
+    var orgig_name = $("#id_name").val();
+    var orgig_email = $("#id_email").val();
+    var orgig_telephone = $("#id_telephone").val();
+    $('#id_name').blur(function () {
+      var new_name = $(this).val();
+      if (new_name != orgig_name) {
+        param = "inputUsername=" + $(this).val();
+        items = 'inputUsername';
+        checkuser(param, items)
+      }
+
+    })
+    $('#id_email').blur(function () {
+      var new_email = $(this).val();
+      if (new_email != orgig_email) {
+        param = "inputEmail=" + $(this).val();
+        items = 'inputEmail';
+        checkuser(param, items)
+      }
+    })
+    $('#id_telephone').blur(function () {
+      var new_telephone = $(this).val();
+      if (new_telephone != orgig_telephone) {
+        param = "mobile=" + $(this).val();
+        items = 'mobile';
+        checkuser(param, items)
+      }
+    })
+
+  </script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends "cdn/cdn.cdn_domain_manager/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body %}
+    <h4>{{ message }}
+        <input type="text" value="{{ uuid }}" style="border:0; color:#f6931f; font-weight:bold;width:500px"></h4>
+        <p><input type="text" value="{{ file }}" style="border:0; color:#f6931f; font-weight:bold;width:300px"></p>
+        <button class="alert alert-warning">{% trans "Warning: This domain name must be in ICP,or you will not pass verified" %}</button>
+
+{% endblock %}

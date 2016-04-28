@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Update Floating IP" %}{% endblock %}
+
+{% block main %}
+	{% include 'network/floating_ips/_update.html' %}
+{% endblock %}

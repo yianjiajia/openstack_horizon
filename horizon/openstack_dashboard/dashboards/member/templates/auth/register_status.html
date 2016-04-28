@@ -1,0 +1,26 @@
+{%  extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}注册结果{% endblock %}
+{% block css %}
+        {% include "_stylesheets.html" %}
+        <link rel="stylesheet" href="/static/dashboard/scss/_member.css" type="text/css" media="screen">    
+{% endblock %}
+
+{% block body_id %}splash{% endblock %}
+
+
+{% block content %}
+  {% include 'auth/_register_status.html' %}
+{% endblock %}
+
+{% block js %}
+    {% include "horizon/_scripts.html" %}
+      <script src="/static/dashboard/js/tool.js?v=2.0"></script>
+      <script src="/static/dashboard/js/form.js?v=2.0"></script>
+{% endblock %}
+
+
+
+    
+

@@ -1,0 +1,69 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Action Log" %}{% endblock %}
+
+{% block page_header %}
+   {% include "horizon/common/_page_header.html" with title=_("Action Log") %}
+{% endblock page_header %}
+
+{% block main %}
+<div class="row">
+    <div class="pull-left">
+    {% include "settings/logger/_query.html" %}</div>
+   <div class="col-sm-12">
+  {{ table.render }}
+   </div>
+    <div class="pull-right">
+        {% include "settings/logger/_pagetion.html" %}
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+    {% include "horizon/_scripts.html" %}
+      <script type="text/javascript">
+      $(function(){
+          var page_current = parseInt($('#page_no').text());
+          $('#page_range').val(page_current);
+
+       $('#shang').on('click', function(){
+          var page_no_jian = parseInt($('#page_no').text()) -1;
+          $('#page_no').text(page_no_jian);
+          $('#id_page_no').val(page_no_jian);
+          $("#submit").submit();
+       }
+
+       );
+        $('#xia').on('click', function(){
+          var page_no_jia = parseInt($('#page_no').text()) + 1;
+          $('#page_no').text(page_no_jia);
+          $('#id_page_no').val(page_no_jia);
+          $("#submit").submit();
+       });
+          $('#search_button').on('click', function(){
+              $('#id_page_no').val(1);
+              $("#submit").submit();
+          });
+       $('#go').click(function(){
+           var page_no = $('#page_range').val();
+           $('#id_page_no').val(page_no);
+           $("#submit").submit();
+       });
+       $('#first_page').on('click', function(){
+           $('#id_page_no').val(1);
+           $("#submit").submit();
+       });
+
+       $('#last_page').on('click', function(){
+           page_last = parseInt($('#page_count').text());
+           $('#id_page_no').val(page_last);
+           $("#submit").submit();
+       })
+
+
+
+      })
+    </script>
+{% endblock %}
+
+

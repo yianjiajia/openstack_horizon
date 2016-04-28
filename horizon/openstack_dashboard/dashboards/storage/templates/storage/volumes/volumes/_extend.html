@@ -1,0 +1,44 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <div class="quota-dynamic">
+    {% include "storage/volumes/volumes/_extend_limits.html" with usages=usages %}
+  </div>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    $(function(){
+      var orig_size = $("#id_orig_size").val();
+      var url = window.location.pathname;
+      var real_url;
+      if (url.split("/")[1] == 'dashboard'){
+          real_url = "/dashboard"
+      }
+      else{
+          real_url = ""
+      }
+    function get_price(price){
+        var hour_price = parseInt($("#id_new_size").val())*price.disk_1_G;
+        if (!$("#id_new_size").val()){
+            hour_price = 0
+        }
+        var mon_price = horizon.modals.get_mon_price(hour_price);
+        $(".price #price").text(hour_price.toFixed(4));
+        $(".small-price #mon_price").text(mon_price);
+    }
+    $.get(real_url+"/instances/api?billing_item=billing_item",function(data){
+      	  var data_json = eval('(' + data + ')');
+          $("#total_fee").append("<div class='not_make_sense'>云硬盘: " + "<span class='price'>¥"+ data_json.disk_1_G + "</span>"
+              + " /G/时</div>");
+          var hour_price = parseInt(orig_size)*data_json.disk_1_G;
+          var mon_price = horizon.modals.get_mon_price(hour_price);
+          $(".price #price").text(hour_price.toFixed(4));
+          $(".small-price #mon_price").text(mon_price);
+          $("#id_new_size").on('click',function(){get_price(data_json)});
+          $("#id_new_size").on('keyup',function(){get_price(data_json)});
+    })
+    });
+
+    </script>
+{% endblock %}

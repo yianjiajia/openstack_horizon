@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Monitor Report" %}{% endblock %}
+{% block main %}
+<div class="row">
+  <div class="col-sm-12">
+  {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}
+
+ {% block js %}
+      {% include "horizon/_scripts.html" %}
+     <script src="/static/dashboard/js/cdn.js"></script>
+ {% endblock %}

@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Log Manager" %}{% endblock %}
+
+{% block main %}
+    <div class="pull-right">
+    {% include "cdn/cdn_log_manager/_usage_summary.html" %}</div>
+    {{ table.render }}
+{% endblock %}

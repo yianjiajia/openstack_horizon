@@ -1,0 +1,128 @@
+{% load i18n %}
+{% with workflow.get_entry_point as entry_point %}
+
+
+    <div class="workflow {{ layout|join:' ' }}" data-backdrop="{{ modal_backdrop }}">
+  <form {{ workflow.attr_string|safe }} action="{{ workflow.get_absolute_url }}" {% if add_to_field %}data-add-to-field="{{ add_to_field }}"{% endif %} method="POST"{% if workflow.multipart %} enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+    {% if REDIRECT_URL %}<input type="hidden" name="{{ workflow.redirect_param_name }}" value="{{ REDIRECT_URL }}"/>{% endif %}
+    <div class="modal-dialog">
+      <div class="modal-content" style="width: 1000px; left: -115px; top: 100px;">
+        <div class="modal-header">
+        {% block modal-header %}
+          {% if modal %}<a href="#" class="close" data-dismiss="modal">&times;</a>{% endif %}
+          <h3 class="modal-title">{{ workflow.name }}</h3>
+        {% endblock %}
+        </div>
+        <div class="modal-body create_instance clearfix" style="padding: 0px;">
+        {% block modal-body %}
+            <div>
+                {% if workflow.selectimage %}
+                <ul class="line-content {% if workflow.wizard %} wizard-tabs{% endif %}" role="tablist" style="width: 600px;">
+               <li class="pull-left text-left">
+               <a class="btn btn-circle pull-left" data-target="#launch_instance__selectimage" data-toggle="tab" href="#launch_instance__selectimage">1</a>
+               <span id="text">{% trans "Select Image" %}</span>
+                <s class="line_bg"></s>
+               </li>
+                <li class="pull-left text-center verify1">
+                    <a class="btn  btn-circle" data-target="#launch_instance__selectconfig" data-toggle="tab" href="#launch_instance__selectconfig">2</a>
+                 <span id="text" style="margin-left: -40px;">{% trans "Select Config" %}</span>
+                 <s class="line_bg"></s>
+               </li>
+                <li class="pull-left verify2">
+                <a class="btn btn-circle pull-right" data-target="#launch_instance__baseinfo" data-toggle="tab" href="#launch_instance__baseinfo">3</a>
+                 <span id="text" class="text-right">{% trans "Base Info" %}</span>
+                 <s class="line_bg"></s>
+               </li>
+               </ul>
+            {% else %}
+            <ul class="line-content {% if workflow.wizard %} wizard-tabs{% endif %}" role="tablist" style="width: 600px;">
+                <li class="pull-left text-left verify1">
+                    <a class="btn btn-circle pull-left" data-target="#launch_instance__selectconfig" data-toggle="tab" href="#launch_instance__selectconfig">1</a>
+                 <span id="text">{% trans "Select Config" %}</span>
+                 <s class="line_bg"></s>
+               </li>
+                <li class="pull-left verify2">
+                <a class="btn btn-circle pull-right" data-target="#launch_instance__baseinfo" data-toggle="tab" href="#launch_instance__baseinfo">2</a>
+                 <span id="text" class="text-right">{% trans "Base Info" %}</span>
+                 <s class="line_bg"></s>
+               </li>
+               </ul>
+            {% endif %}
+            </div>
+          <div class="tab-content">
+            {% for step in workflow.steps %}
+              <fieldset id="{{ step.get_id }}" class="js-tab-pane{% if entry_point == step.slug %} active{% endif %}">
+                {{ step.render }}
+              </fieldset>
+              {% if not forloop.last %}
+                <noscript><hr /></noscript>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endblock %}
+        </div>
+        <div class="modal-footer" style="width: 600px;">
+        {% block modal-footer %}
+          {% if workflow.wizard %}
+          <div class="row">
+            <div class="col-sm-6 back">
+                <button type="button" class="btn btn-default button-previous pull-left">&laquo; {% trans "Back" %}</button>
+            </div>
+            <div class="col-sm-6 next">
+                <button type="button" class="btn btn-primary button-next pull-left">{% trans "Next" %}&raquo;</button>
+              <button type="submit" class="btn btn-primary button-final pull-left">{{ workflow.finalize_button_name }}</button>
+            </div>
+          </div>
+          {% else %}
+            <input class="btn btn-primary pull-right" type="submit" value="{{ workflow.finalize_button_name }}" />
+            {% if modal %}<a class="btn btn-default secondary cancel close">{% trans "Cancel" %}</a>{% endif %}
+          {% endif %}
+        {% endblock %}
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+{% endwith %}
+{% block modal-js %}
+  {% if workflow.wizard %}
+  <script type="text/javascript">
+    (window.$ || window.addHorizonLoadEvent)(function () {
+      horizon.modals.init_wizard();
+    });
+    $("#id_floating_ip_limit_speed").parent().append('<span class="help-block" style="margin-left:120px">{% trans "Should little than Total Bandwidth, Set -1 or 0 If want have no limit." %}</span>');
+  </script>
+  {% endif %}
+{% endblock %}
+
+
+ <style>
+.line-content{height:80px;width:100%; clear:both;padding-left: 0px;padding: 20px 0px 0px 50px;height: 100px;background-color: #f7f7f5}
+.line-content li{width:30%; position:relative }
+.line-content li:nth-child(1) s{ width:200%;}
+.line-content li:nth-child(2) a{float:left; margin-left: 25%;}
+
+.line-content a.btn.btn-circle.pull-right{margin-top:0px;}
+.line-content li .line_bg{border: 3px solid #ebebeb; position:absolute;width:100%;top:18px;}
+.line-content .btn-circle{border-radius: 50px;width:42px; height:42px;  padding: 5px 10px; display: block;position: relative;z-index: 10;}
+a.btn.btn-circle{color:#fff; border: 5px solid #ebebeb; }
+li.active.done a{background-color: #ffb62c;}
+#text{
+    display: block;
+    font-size: 12px;
+    padding-top: 5px;
+    clear: both;}
+
+#available_selectimage .available_members ul.btn-group {
+    margin: 0px 0px 7px 115px;
+    padding: 0px;
+    border: 1px solid #e6e6e6;
+    border-radius: 2px;
+    color: #999;
+    height: 35px;
+}
+
+.button-previous.disabled{
+         display: none;
+     }
+</style>

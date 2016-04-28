@@ -1,0 +1,30 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <div class="col-sm-6">
+    <p>{% trans "Init VPN credential, service, connection." %}</p>
+  </div>
+{% endblock %}
+
+{% block modal-js %}
+  <script type="text/javascript">
+    $(function () {
+      var url = window.location.pathname;
+      var real_url;
+      if (url.split("/")[1] == 'dashboard') {
+        real_url = "/dashboard"
+      }
+      else {
+        real_url = ""
+      }
+      $.get(real_url + "/instances/api?billing_item=billing_item", function (data) {
+        data_json = eval('(' + data + ')');
+        var hour_fee = data_json.vpn_1;
+        $(".price #price").text(hour_fee.toFixed(4));
+        var month_fee = horizon.modals.get_mon_price(hour_fee);
+        $(".small-price #mon_price").text(month_fee);
+      })})
+
+  </script>
+{% endblock %}

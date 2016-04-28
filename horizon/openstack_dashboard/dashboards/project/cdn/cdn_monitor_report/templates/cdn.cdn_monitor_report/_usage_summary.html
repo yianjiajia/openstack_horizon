@@ -1,0 +1,14 @@
+{% load i18n sizeformat %}
+<div class="usage_info_wrapper">
+  <div class="form-inline">
+      <div class="datepicker form-group">
+      {% blocktrans with start=form.start %}
+      <label>From:</label> {{ start }}{% endblocktrans %}
+    </div>
+    <div class="datepicker form-group">
+      {% blocktrans with end=form.end %}
+      <label>To:</label>{{ end }}{% endblocktrans %}
+    </div>
+    <button class="btn btn-primary" id="submit">{% trans "Submit" %}</button>
+ </div>
+</div>

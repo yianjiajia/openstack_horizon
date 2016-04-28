@@ -1,0 +1,16 @@
+{% load i18n %}
+{% for ip_group, ips in ip_groups.items %}
+    {% if ip_groups.keys|length > 1 %}
+    <h4>{{ ip_group }}</h4>
+    {% endif %}
+    <ul>
+    {% for address in ips.non_floating %}
+        <li>{{ address.addr }}</li>
+    {% endfor %}
+    {% if ips.floating|length > 0 %}
+        {% for address in ips.floating %}
+        <li>{{ address.addr }}</li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+{% endfor %}

@@ -1,0 +1,16 @@
+{
+    "admin_required": "role:admin or is_admin:1",
+    "service_role": "role:service",
+    "service_or_admin": "rule:admin_required or rule:service_role",
+    "owner" : "user_id:%(user_id)s",
+    "admin_or_owner": "rule:admin_required or rule:owner",
+	"project_admin_required": "role:project_admin",
+
+    "default": "rule:admin_required",
+
+    "cdn:cache_refresh": "",
+    "cdn:domain_manager": "",
+    "cdn:log_manager": "",
+    "cdn:monitor_report": "",
+    "cdn:cdn_manager": "rule:admin_required"
+}

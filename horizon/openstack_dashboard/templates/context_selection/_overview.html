@@ -1,0 +1,14 @@
+{% load i18n %}
+  <span class="context-overview">
+    {% if domain_supported %}
+    <span>{{ domain_name }}</span>
+{#    <strong>&middot;</strong>#}
+    {% endif %}
+    <span>{{ project_name }}</span>
+{#    {% if multi_region %}#}
+{#    <strong>&middot;</strong>#}
+    <span>{% trans region_name %}</span>
+{#    {% endif %}#}
+  </span>
+{#<span class="caret"></span>#}
+<span class="fa icon-location"></span>

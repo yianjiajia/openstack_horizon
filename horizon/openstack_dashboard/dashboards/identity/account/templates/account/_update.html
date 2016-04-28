@@ -1,0 +1,254 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Edit the Account's details" %}</p>
+  
+  
+  
+  
+  <style>
+	.form-group.has-error .error{display:block}
+	.form-group .error{display:none;}
+	.form-group .error.sr-only{
+		position: relative;
+	    width: 300px;
+	    height: 25px;
+	    padding: 5px;
+	    color: #E74C3C;
+	    z-index: 9999;
+	}
+</style>
+  <script type="text/javascript">
+    if (typeof horizon.user !== 'undefined') {
+      horizon.user.init();
+    } else {
+      addHorizonLoadEvent(function () {
+        horizon.user.init();
+      });
+    }
+
+	$("#update_account_form .btn-primary").attr("disabled", true);
+	var erroremail=0;
+    var errortelephone=0;
+    var errorcompany=0;
+    var safeToken = $("#id_safeCard").val();
+    var real_url = get_url();
+    var icon = "<i class='fa fa-times-circle font-size14'></i>";
+
+    function get_url() {
+      var url = window.location.pathname;
+      real_url = "/";
+      if (url.split("/")[1] == 'dashboard') {
+        real_url = "/dashboard/"
+      }
+      return real_url;
+    }
+
+    function ErrorInput(id, error) {
+	    id_error = "#id_"+ id;
+	    obj = $(id_error);
+	    obj.parent().children('.error').remove();
+	    obj.parent().parent().addClass('has-error');
+	    errors='<span id="inputError" class="error sr-only">'+icon+error+'</span>';
+	    obj.after(errors);
+	  }
+
+  //del error
+  function ErrorDel(items) {
+    obj = $("#id_" + items)
+    obj.parent().children('.error').remove();
+    obj.parent().parent().removeClass('has-error')
+  }
+  var fromErrors = {
+    'name': {
+      'empty': '用户名不能为空哦~',
+      'notype': '格式错误(用户名4-20位，且至少含一个英文字符)',
+      'exsit': '用户名已注册'
+    },
+    'email': {'empty': '邮箱不能为空哦~', 'notype': '邮箱格式错误', 'exsit': '邮箱已注册'},
+    'password': {'empty': '密码不能为空哦~', 'nolen': '密码长度为 6-14 位', 'noblank': '密码禁用空格', 'notype': '密码格式错误哦~'},
+    'confirm_password': {'empty': '确认密码不能为空', 'nosame': '两次输入的密码不同'},
+    'telephone': {'empty': '手机不能为空', 'notype': '手机格式错误', 'exsit': '手机已注册'},
+    'company': {'empty': '公司名不能为空','exsit': '该公司已注册'},
+    'industry': {'empty': '行业不能为空'}
+  };
+  var self_company=$("#id_company").val();
+  var self_email=$("#id_email").val();
+  var self_telephone=$("#id_telephone").val();
+
+
+     function checkuser(param, items) {
+    	if (param != '') {
+     	 param += "&inputsafeToken=" + safeToken
+     	 $.get(real_url + "member/checkUser/?" + param, function (data) {
+                if (data == 'Exist') {
+	                 if (items == "email") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     errorcompany=1;
+	                  }
+	                  check_status(); 
+                      return false;
+                }else if (data == 'limitVisit') {
+                       if (items == "email") {
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     errorcompany=1;
+	                  }
+	                  ErrorInput(items, '非法的访问');
+	                  check_status(); 
+	                  return false;
+                }else if (data == 'safeTokenTimeout') {
+                	  if (items == "email") {
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     errorcompany=1;
+	                  }
+	                  ErrorInput(items, '安全验证失效,请重新刷新注册页面');
+	                  return false;
+                }else if (data == 'safeTokenError') {
+                     if (items == "email") {
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     errorcompany=1;
+	                  }
+	                  ErrorInput(items, '安全验证失败,请重新刷新注册页面');
+	                  check_status(); 
+	                  return false;
+	                  
+                }else {
+                	 if (items == "email") {
+	                     erroremail=0;
+	                     check_status(); 
+	                  } else if (items == "telephone") {
+	                     errortelephone=0;
+	                     check_status(); 
+	                  }else if(items=='company'){
+						   checkproject(param,items);
+					  }
+                }
+                
+              }
+      )
+    }
+  }
+  
+  //项目名判断
+	function checkproject(param,items){
+	     if(param!='' && items=='company'){
+			 param+="&inputsafeToken="+safeToken
+			  $.get(real_url+"member/checkproject/?"+param,function(data){
+               if(data=='Exist'){
+					   ErrorInput(items,fromErrors[items]['exsit']);
+					   errorcompany=1;
+				   }else if(data=='limitVisit'){
+					   ErrorInput(items,'非法的访问');
+					   errorcompany=1;
+				   } else if(data=='safeTokenTimeout'){
+					   ErrorInput(items,'安全验证失效,请重新刷新注册页面');
+					   errorcompany=1;
+				  }else if(data=='safeTokenError'){
+					   ErrorInput(items,'安全验证失败,请重新刷新注册页面');
+					   errorcompany=1;
+				  }else{
+				         errorcompany=0;
+				         ErrorDel(items);
+				  }
+					   check_status(); 
+          })
+		}
+	}
+	
+	function check_status(){
+	        if(erroremail==0 && errortelephone==0 && errorcompany==0){
+                 	    $("#update_account_form .btn-primary").attr("disabled", false);
+                   }else{
+                  	     $("#update_account_form .btn-primary").attr("disabled", true);
+             }
+	}
+	
+	
+	$(document).ready(function(){	
+	  var param = '';
+	  var items = '';
+	  $('.form-group input').blur(function (){
+	  	    var val= $(this).val();
+	        param = "inputUsername=" + val;
+	        items = $(this).attr("name");
+	        if(val==''){
+	        	   if (items == "email") {
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     errorcompany=1;
+	                  }
+	        	ErrorInput(items,fromErrors[items]['empty']);
+	        	check_status();	
+	        	return false;
+	        }
+	        if(items=='company'){
+		        	  if(val==self_company){
+		        	   	 errorcompany=0;
+		        	   	 check_status();	
+		        	   	 ErrorDel(items);
+		        	  }else{
+		        	     param = "compName=" + val;
+		                 checkuser(param, items);
+		        	  }
+	        	}
+	        else if(items=='email'){
+	            if(!checkEmail(val)){
+	                     erroremail=1;
+	 					 ErrorInput(items,fromErrors[items]['notype']);
+	 					 check_status();	
+	 					 return false;
+	 			 }else if(val==self_email){
+	        	  	      erroremail=0;
+	        	  	      check_status();
+	        	  	      ErrorDel(items);
+	        	  }else{
+				          param = "inputEmail=" + $(this).val();
+				          checkuser(param, items);
+	        	  }
+	        }else if(items=='telephone'){
+	        	 if(!checkPhone(val)){
+	        			 errortelephone=1;
+	 					 ErrorInput(items,fromErrors[items]['notype']);
+	 					 check_status();
+	 					 return false;
+	 			 }else if(val==self_telephone){
+	        	  	      errortelephone=0;
+	        	  	      check_status();
+	        	  	      ErrorDel(items);
+	        	  }else{
+				          param = "mobile=" + $(this).val();
+				          checkuser(param, items);
+	        	  }
+	        }
+	      
+	       
+	  })
+
+ })
+ 
+
+
+
+	
+
+  </script>
+{% endblock %}

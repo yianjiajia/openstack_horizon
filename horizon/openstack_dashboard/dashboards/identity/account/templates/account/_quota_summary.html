@@ -1,0 +1,43 @@
+{% load i18n sizeformat %}
+<div>
+  <h4>{% trans "Usage Information(Used/All)" %}</h4>
+  <hr class="header_rule">
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>区域</th>
+      <th>云服务器(台)</th>
+      <th>CPU(核)</th>
+      <th>内存(G)</th>
+      <th>硬盘数(个)</th>
+      <th>快照(个)</th>
+      <th>硬盘容量(G)</th>
+      <th>快照容量(G)</th>
+      <th>浮动IP(个)</th>
+      <th>网络(个)</th>
+      <th>路由器(个)</th>
+      <th>子网(个)</th>
+      <th>负载均衡（个）</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in user.usages %}
+      <tr>
+        <td>{{ u.region.quota }}</td>
+        <td>{{ u.instances.used }}/{{ u.instances.quota }}</td>
+        <td>{{ u.cores.used }}/{{ u.cores.quota }}</td>
+        <td>{{ u.ram.used |to_gb }}/{{ u.ram.quota |to_gb }}</td>
+        <td>{{ u.volumes.used }}/{{ u.volumes.quota }}</td>
+        <td>{{ u.snapshots.used }}/{{ u.snapshots.quota }}</td>
+        <td>{{ u.volume_gigabytes.used }}/{{ u.volume_gigabytes.quota }}</td>
+        <td>{{ u.snapshot_gigabytes.used }}/{{ u.snapshot_gigabytes.quota }}</td>
+        <td>{{ u.floating_ips.used }}/{{ u.floating_ips.quota }}</td>
+        <td>{{ u.networks.used }}/{{ u.networks.quota }}</td>
+        <td>{{ u.routers.used }}/{{ u.routers.quota }}</td>
+        <td>{{ u.subnets.used }}/{{ u.subnets.quota }}</td>
+        <td>{{ u.pool.used }}/{{ u.pool.quota }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>

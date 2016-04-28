@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Instances" %}{% endblock %}
+
+{% block main %}
+  {{ table.render }}
+{% endblock %}
+
+{% block js %}
+  {% include "horizon/_scripts.html" %}
+  <script>
+    var account_is_frozen = {{ account_is_frozen }};
+    if (account_is_frozen) {
+      $("#instances__action_start").removeAttr('data-batch-action');
+      $("#instances__action_start").addClass('disabled');
+    }
+  </script>
+{% endblock %}

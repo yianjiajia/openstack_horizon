@@ -1,0 +1,36 @@
+{% load i18n sizeformat parse_date %}
+{% load url from future %}
+
+<div class="info row detail">
+  <h4>{% trans "Information" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Name" %}</dt>
+    <dd>{{ strategy.name }}</dd>
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ strategy.id }}</dd>
+    {% if strategy.description %}
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ strategy.description }}</dd>
+    {% endif %}
+    <dt>{% trans "Volume" %}</dt>
+    <dd>
+      <a href="{% url 'horizon:storage:volumes:volumes:detail' strategy.volume_id %}">
+        {% if volume.name %}
+          {{ volume.name }}
+        {% else %}
+          {{ strategy.volume_id }}
+        {% endif %}
+      </a>
+    </dd>
+  </dl>
+</div>
+
+<div class="specs row detail">
+  <h4>{% trans "Specs" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Created" %}</dt>
+    <dd>{{ strategy.created_at|parse_date }}</dd>
+  </dl>
+</div>

@@ -1,0 +1,7 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+
+{% block modal-body-right %}
+  <p><strong style="color:red">{% trans "This Operation will delete all configuration and resources(network, images, servers, disks, VPN, firewall, keypair) and !!! Please confirm your operation." %} </strong></p>
+{% endblock %}

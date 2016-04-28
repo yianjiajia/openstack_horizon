@@ -1,0 +1,77 @@
+{% load form_helpers %}
+ {% load branding i18n %}
+ <input type='hidden' id='logoTag' value='{%site_logo%}'>
+<div class="login-form" data-example-id="form-validation-states-with-icons">
+<div class="form-group"  id='page-subject'><img class="logo_horizontal" src="/static/dashboard/img/space.png"> <span class='page-title'>｜ 登录</span></div>
+       
+       <form id="form_id_login"
+        ng-controller="{% block ng_controller %}DummyCtrl{% endblock %}" name="{% block form_name %}{% endblock %}" autocomplete="{% block autocomplete %}{% if form.no_autocomplete %}off{% endif %}{% endblock %}"
+        class="{% block form_class %}form-box{% endblock %}" action="{% block form_action %}{{ submit_url }}{% endblock %}"
+        method="{% block form-method %}POST{% endblock %}"
+        {% block form_validation %}{% endblock %}
+        {% if add_to_field %}data-add-to-field="{{ add_to_field }}"{% endif %} {% block form_attrs %}{% endblock %}>
+         
+        {% csrf_token %}
+        {% if next %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ next }}" />{% endif %}
+        {% include 'horizon/common/_form_errors.html' with form=form %}
+    <div class="form-group" id="form-error">
+        <div class="bs-example bs-example-bg-classes">
+
+        <p class="bg-danger text-danger"><i class="fa fa-minus-circle"></i>
+        {% for field in form.visible_fields %}
+           {% for error in field.errors %}
+           {% endfor %}
+        {% endfor %}
+        </div>
+      </div>
+      
+      <div class="form-group has-feedback">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-user"></i></span>
+          <input autofocus="autofocus"  type="text" class="form-control" id="id_username" name="username"  placeholder="用户名/邮箱/手机号">
+        </div>
+        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true" id="ok"></span>
+        <span id="id_usernameError" class="error sr-only"></span>
+      </div>
+       
+        <div class="form-group  has-feedback">
+        <div class="input-group">
+          <span class="input-group-addon"><i class="fa fa-key"></i></span>
+          <input class="form-control" id="id_password" name="password" type="password" placeholder="密码">
+        </div>
+        <span class="glyphicon glyphicon-ok form-control-feedback" id="ok" aria-hidden="true"></span>
+         <span id="id_passwordError" class="error sr-only"></span>
+       
+      </div>
+      
+        <div class="form-group">
+        <div class="input-group set-yzm">
+        <div class='col-sm-12' style='padding: 0px;'>
+        
+          <input type="text" class="form-control yzm" id="yzm" placeholder="验证码">
+          <a href="javascript:void(0);"   id="checkCode" class="form-control unchanged pull-right code">
+           	 
+          </a>
+           <span id="yzmError" class="error sr-only"></span>
+        </div>
+
+        </div>
+        <div>
+      </div>
+      <input type='hidden' name='auth_type' id='auth_type'/>
+      <button type="submit" class="btn btn-default" id="btn-login">登录</button>
+      <!--隐藏-->
+      </form>
+     <div class="pull-right"> {% site_register_status %}<a href="" class='getpassword seturl'>忘记密码</a></div>
+  </div>
+  
+
+
+
+
+
+
+
+
+
+

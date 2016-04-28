@@ -1,0 +1,7 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Init Firewall, below are ports used daily, select 80(HTTP),1194(openVPN)，ICMP,22(SSH),53(DNS) by default, you decide which port should be open." %}</p>
+{% endblock %}

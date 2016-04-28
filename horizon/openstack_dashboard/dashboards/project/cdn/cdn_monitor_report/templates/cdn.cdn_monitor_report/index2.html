@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Cdn_Cache_Refresh" %}{% endblock %}
+
+{% block page_header %}
+      {% include "horizon/common/_page_header.html" with title=_("Cdn Monitor Report") %}
+{% endblock page_header %}
+{% block main %}
+   <div class="row">
+       <div class="col-sm-12">
+      <ul class="nav nav-tabs">
+          <li class="active"><a href="#Monitor_chart" data-toggle="tab">{{ Monitor_chart }}</a></li>
+            <li><a href="#Data_Statistics" data-toggle="tab">{{ Data_Statistics}}</a></li>
+      </ul>
+    <div id="myTab" class="tab-content">
+          <div class="tab-pane fade in active" id="Monitor_chart">
+            <button class="alert alert-info ">本月目前使用总流量：{{ flow }}M</button>
+             <div>
+                 <span style="padding:1% 0.5%;"><label>监控指标</label></span>
+                        <span style="padding:1% 0.5%;"><select name="monitor">
+                            <option value ="flow">流量监控</option>
+                                <option value ="number">访问请求数</option>
+                             </select></span>
+                    <span style="padding:1% 0.5%;"><label>域名选择</label>
+                            </span>
+                            <select name="domain">
+                                <option value ="flow">全部</option>
+                                        {% for i in domain_list %}
+                                        <option value ="{{ i }}">{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                        <span style="padding:1% 2%;"><label>时间选择</label></span>
+                            <div id="date1"></div><hr>
+                        <div id="monitor_chart"></div>
+
+             </div>
+              </div>
+          <div class="tab-pane fade" id="Data_Statistics">
+              <div>
+                  <label>时间选择</label>
+                    <div id="date2"></div>
+              </div>
+              <div>
+                <table class="table table-bordered table-striped datatable tablesorter tablesorter-default">
+                    <thead>
+                    <tr>
+
+                        <th class="sortable normal_column tablesorter-header">日期</th>
+                        <th class="sortable normal_column tablesorter-header">峰值带宽</th>
+                        <th class="sortable normal_column tablesorter-header">流量</th>
+
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in obj %}
+                    <tr>
+                        <td>{{ i.pk }}</td>
+                        <td>{{ i.serverip }}</td>
+                        <td>{{ i.mingcheng }}</td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+{% endblock %}
+
+
+

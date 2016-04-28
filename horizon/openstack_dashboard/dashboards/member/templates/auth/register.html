@@ -1,0 +1,27 @@
+{%  extends 'base.html' %}
+{% load i18n %}
+{% load branding i18n %}
+{% block title %}注册{% endblock %}
+{% block css %}
+        {% include "_stylesheets.html" %}
+        <link rel="stylesheet" href="/static/dashboard/scss/_member.css?v=3.0" type="text/css" media="screen">
+{% endblock %}
+
+{% block body_id %}splash{% endblock %}
+
+
+{% block content %}
+  <input type='hidden' id='logoTag' value='{%site_logo%}'>
+  {% include 'auth/_register.html' %}
+{% endblock %}
+{% block js %}
+    {% include "horizon/_scripts.html" %}
+      <script src="/static/dashboard/js/tool.js?v=3.0"></script>
+      <script src="/static/dashboard/js/form.js?v=4.0"></script>
+{% endblock %}
+
+
+
+
+    
+

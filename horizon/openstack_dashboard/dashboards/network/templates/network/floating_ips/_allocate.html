@@ -1,0 +1,42 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load horizon i18n %}
+
+{% block modal-body-right %}
+<div class="quota-dynamic">
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Allocate a floating IP from a given floating IP pool." %}</p>
+
+{#  <h3>{% trans "Project Quotas" %}</h3>#}
+{#  <div class="quota_title">#}
+{#    <strong>{% trans "Floating IP" %} <span>({{ usages.floating_ips.used }})</span></strong>#}
+{#    <p>{{ usages.floating_ips.available|quota }}</p>#}
+{#  </div>#}
+{#  <div class="clearfix"></div>#}
+{#  <div id="floating_ip_progress" class="quota_bar" data-quota-used="{{ usages.floating_ips.used }}" data-quota-limit="{{ usages.floating_ips.quota }}" data-progress-indicator-step-by="1"></div>#}
+</div>
+  <script type="text/javascript" charset="utf-8">
+    if(typeof horizon.Quota !== 'undefined') {
+      horizon.Quota.init();
+    } else {
+      addHorizonLoadEvent(function() {
+        horizon.Quota.init();
+      });
+    }
+    $("#id_limit_speed").parent().append('<span class="help-block">{% trans "Should little than Total Bandwidth, Set -1 or 0 If want have no limit." %}</span>');
+    var url = window.location.pathname;
+    var real_url;
+    if (url.split("/")[1] == 'dashboard') {
+      real_url = "/dashboard"
+    }
+    else {
+      real_url = ""
+    }
+    $.get(real_url + "/instances/api?billing_item=billing_item", function (data) {
+      data_json = eval('(' + data + ')');
+      var hour_fee = data_json.ip_1;
+      $(".price #price").text(hour_fee.toFixed(4));
+      var month_fee = horizon.modals.get_mon_price(hour_fee);
+      $(".small-price #mon_price").text(month_fee);
+    })
+  </script>
+{% endblock %}

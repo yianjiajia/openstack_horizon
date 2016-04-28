@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Edit Pool" %}{% endblock %}
+
+{% block main %}
+  {% include 'network/loadbalancers/_updatepool.html' %}
+{% endblock %}

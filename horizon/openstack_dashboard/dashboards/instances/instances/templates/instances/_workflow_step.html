@@ -1,0 +1,87 @@
+{% load i18n %}
+<noscript><h3>{{ step }}</h3></noscript>
+<div class="row">
+  <div class="col-sm-7 instance-config" id="instance-config" style="width: 600px;background-color: #fff; min-height: 450px; margin-left: 15px;">
+      {% if step.slug == 'selectconfig' %}
+      <div class="step-inner">
+      <div class="custom-instance-types">
+          <div id="image">
+              <label>{% trans "operating system" %}</label>
+              <div class="options">
+                   <div id="image_name" class="types-options cpu-options" style="height:35px; padding:6px; text-align:center;"></div>
+                  </div>
+          </div>
+          <div class="cpu">
+                <label>CPU</label>
+                <div class="options">
+                    <!--div data-value="1" class="types-options cpu-options" style="width: 53px; height:35px; padding:3px">1 {% trans 'core' %}</div-->
+                    <!--div data-value="2" class="types-options cpu-options selected" style="width: 53px;height:35px; padding:3px">2 {% trans 'core' %}</div>
+                    <div data-value="4" class="types-options cpu-options" style="width: 53px;height:35px; padding:3px">4 {% trans 'core' %}</div>
+                    <div data-value="8" class="types-options cpu-options" style="width: 53px;height:35px; padding:3px">8 {% trans 'core' %}</div>
+                    <div data-value="16" class="types-options cpu-options" style="width: 53px;height:35px; padding:3px">16 {% trans 'core' %}</div>
+                    <div data-value="24" class="types-options cpu-options" style="width: 53px;height:35px; padding:3px">24 {% trans 'core' %}</div>
+                    <div data-value="32" class="types-options cpu-options" style="width: 53px;height:35px; padding:3px">32 {% trans 'core' %}</div-->
+            </div>
+                </div>
+          <div class="memory">
+                <label style="margin-top: 7px;">{% trans 'Memory' %}</label>
+                <div class="options">
+                    <!--div data-value="1024" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">1G</div-->
+                    <!--div data-value="2048" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">2G</div>
+                    <div data-value="4096" class="types-options memory-options selected" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">4G</div>
+                    <div data-value="8192" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">8G</div>
+                    <div data-value="16384" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">16G</div>
+                    <div data-value="32768" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">32G</div>
+                    <div data-value="65536" class="types-options memory-options" style="width: 53px; height:35px; padding:3px; margin-top: 12px;">64G</div-->
+                </div>
+            </div>
+            <div>
+                <label for="amount" class="pull-left" style="margin-top: 5px;">{% trans "Cloud Drive" %}:</label>
+                <div id="slider-range-max" style=""></div>
+                <span class="pull-right"><input type="number" min="0" id="amount" style="color:#ffb62c; border: #f5f5f5 solid 2px;margin-top: 7px;width: 70px;margin-left: 7px;">GB</span>
+            </div>
+          </div>
+          </div>
+      {% include "horizon/common/_form_fields.html" %}
+
+      {% endif %}
+      {% if step.slug == 'baseinfo' %}
+      {% include "horizon/common/_form_fields.html" %}
+      {% endif %}
+  </div>
+  <div class="col-sm-5" style="float: right;padding: 20px;width: 360px; top: 0px; right: 20px; position: absolute;">
+      <h4>{% trans "Configuration Details" %}</h4>
+      <table class="table flavor_table table-bordered datatable">
+          <tbody>
+            <tr><td class="flavor_name">{% trans "Image" %}</td><td><div class="flavor_Image">
+                 <a  href="#" data-original-title="test" data-toggle="tooltip" data-placement="top" data-val="" title="" class="provider-filter"
+                            style="text-decoration:underline;">gaga</a>
+            </div></td></tr>
+            <tr><td class="flavor_name">{% trans "VCPUs" %}</td><td><span class="flavor_vcpus"></span>{% trans 'core' %}</td></tr>
+            <tr><td class="flavor_name">{% trans "RAM" %}</td><td><span class="flavor_ram"></span></td></tr>
+            <tr><td class="flavor_name">{% trans "System Drive" %}</td><td><span class="flavor_system_drive"></span></td></tr>
+            <tr><td class="flavor_name">{% trans "Cloud Drive" %}</td><td><span class="flavor_cloud_drive"></span>GB</td></tr>
+             <tr><td class="flavor_name">{% trans "Floating IP" %}</td><td><span id="floating_ip" class="floating_ip"></span></td></tr>
+            <tr><td class="flavor_name">{% trans "Counts" %}</td><td><span class="flavor_count"></span></td></tr>
+        </tbody>
+      </table>
+     <h4><span class="total">{% trans "Total" %}:</span>
+                  <span class="price"><span class="currency">¥</span><span id="price"></span></span><span class="unit">{% trans "Per Hour" %}</span>
+                  <span class="none">(<span class="small-price"><span class="currency">¥</span><span id="mon_price"></span></span>{% trans "Per Month" %})</span>
+              </h4>
+  </div>
+</div>
+{% if step.slug == 'selectconfig' %}
+<script>
+    if (typeof horizon.membership !== 'undefined') {
+    horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+  } else {
+    addHorizonLoadEvent(function() {
+      horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+    });
+  }
+    $(".provider-filter").tooltip();
+</script>
+<script src="/static/dashboard/js/create_instance.js"></script>
+
+{% endif %}

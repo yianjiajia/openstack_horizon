@@ -1,0 +1,5 @@
+{% load i18n %}
+<form  name="" action="{{ submit_url }}" method="get" >
+    <textarea name="dir_list" id="text_area" cols="70" rows="10"  placeholder="{% trans "Please input url，for example,http://test1.syscloud.cn/images/" %}"></textarea>
+        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-refresh"></span>{% trans "Fresh" %}</button></form>
+           <button class="alert alert-warning">{% trans "Warning: Please use multiple url separated by a newline, submitted should not exceed 100 URL" %}</button>

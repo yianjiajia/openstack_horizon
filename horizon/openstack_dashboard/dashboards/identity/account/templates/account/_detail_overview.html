@@ -1,0 +1,53 @@
+{% load i18n %}
+
+<div class="info detail">
+  <h4>{% trans "Information" %}</h4>
+  <hr class="header_rule">
+  <div class="dl-horizontal user-detail">
+    <div class="col-xs-4">
+      <span>{% trans "User Name" %}</span>
+      <span>{{ user.name }}</span>
+    </div>
+    <div class="col-xs-4">
+      <span>{% trans "Project Name" %}</span>
+      <span>{{ user.project_name }}</span>
+    </div>
+    <div class="col-xs-4">
+      <span>{% trans "Roles" %}</span>
+      <span>{% trans user.roles %}</span>
+    </div>
+
+    <div class="col-sm-4 ">
+      <span>{% trans "User ID" %}</span>
+      <span>{{ user.id }}</span>
+    </div>
+    <div class="col-sm-4">
+      <span>{% trans "Project ID" %}</span>
+      <span>{{ user.default_project_id }}</span>
+    </div>
+    <div class="col-sm-4">
+      <span>{% trans "Region" %}</span>
+      <span>{{ user.regions|join:"," }}</span>
+    </div>
+
+
+    <div class="col-sm-4 ">
+      <span>{% trans "Company Name" %}</span>
+      <span>{{ user.company }}</span>
+    </div>
+    <div class="col-sm-4">
+      <span>{% trans "Email" %}</span>
+      <span>{{ user.email|default:_("None") }}</span>
+    </div>
+    <div class="col-sm-4">
+      <span>{% trans "Telephone" %}</span>
+      <span>{{ user.telephone }}</span>
+    </div>
+  </div>
+
+
+</div>
+
+
+</div>
+

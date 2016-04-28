@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="MySQL - naas@192.168.210.200" uuid="b23dadec-de3a-4f55-a2c5-f69ba24d7345">
+      <secret-storage>memory</secret-storage>
+      <user-name>root</user-name>
+      <schema-pattern>naas.*</schema-pattern>
+      <default-schemas>naas.*</default-schemas>
+    </data-source>
+    <data-source name="MySQL - naas@192.168.210.29" uuid="40a2705b-8994-4971-a54c-4a2a3738bc9b">
+      <secret-storage>memory</secret-storage>
+      <user-name>djw</user-name>
+      <schema-pattern>naas.*</schema-pattern>
+      <default-schemas>naas.*</default-schemas>
+    </data-source>
+  </component>
+</project>

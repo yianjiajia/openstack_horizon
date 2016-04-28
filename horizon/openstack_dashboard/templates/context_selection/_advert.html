@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load staticfiles %}
+<img src="{% static 'dashboard/images/speaker.png' %}" style="padding-left: 50px;">
+<font size="4">.</font>
+<span id='advert_item' >
+{% for advert in advertList.valid_advert_list %}
+<a href="{{advert.url}}" style="color: #E69100" target="_blank">[{{advert.started_at}}]&nbsp;&nbsp;{{advert.title}}</a>
+{% endfor %}
+</span>
+<script type="text/javascript">
+$(function(){
+    $('#advert_item a:first').siblings().hide();
+    var xunhuan = function(){
+      if($('#advert_item a:visible').next('a').get(0) === undefined){
+        $('#advert_item a:visible').slideUp('slow', function(){
+          $('#advert_item a:first').fadeIn("slow");
+        });
+      }else{
+        $('#advert_item a:visible').slideUp('slow', function(){
+          $(this).next('a').fadeIn("slow");
+        });
+      }
+    }
+    var t = setInterval(function(){
+      xunhuan();
+    }, 1000*10)
+  });
+</script>

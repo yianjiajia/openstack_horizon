@@ -1,0 +1,43 @@
+<div class="container user_form">
+  <div class="row">
+      <div class="col-xs-6  page_left"><img src="/static/dashboard/img/register_image.png"></div>
+      <div class="col-xs-6  page_right">
+       <div class="register_box result congratulate" data-example-id="form-validation-states-with-icons">  
+        <div class="form-group">
+        {% if user_obj %}
+         <label class="col-sm-2 control-label">
+        <i class="fa fa-check-circle yelow size66"></i>
+        </label>
+         <div class="col-sm-10 congratulate">
+            <h1>恭喜注册成功！</h1>
+            <div class="user_info">
+            您的账号为：<span class="yellow">{{user_obj.name}}</span><br>
+            <span>邮箱：{{user_obj.email}}</span> 
+            <br><span>手机：{{user_obj.telephone}}</span>
+           </div>
+           
+           <a href='{{loginurl}}' id="direct_login" class="btn btn-default pull-left col-sm-5">
+           立即登录
+           </a>
+         </div>
+         {% else %}
+                  <label class="col-sm-2 control-label">
+               <i class="fa fa-time-circle yelow size66"></i>
+               </label>
+             <div class="col-sm-10 congratulate">
+            <h1>注册失败！</h1>
+            <div class="user_info">
+            您的账号为：<span class="yellow">{{name}}</span><br>
+           </div>
+           
+           <a href='{{registerurl}}' id="direct_login" class="btn btn-default pull-left col-sm-5">
+           重新注册
+           </a>
+         </div>
+        {%endif%} 
+         
+       </div>
+       </div>
+      </div>
+  </div>
+</div>  

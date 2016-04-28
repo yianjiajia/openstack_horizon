@@ -1,0 +1,102 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+<h3>{% trans "Description:" %}</h3>
+<p>{% block title %}{% trans "Volumes are block devices that can be attached to instances." %}{% endblock %}</p>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    $(function() {
+        var url = window.location.pathname;
+        var real_url;
+        if (url.split("/")[1] == 'dashboard') {
+            real_url = "/dashboard"
+        }
+        else {
+            real_url = ""
+        }
+        function do_msg_for_page(err_message) {
+            $("#id_show_error_msg_for_page").remove();
+            var err_div = '<div id="id_show_error_msg_for_page" class="alert alert-message alert-danger">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    '<ul class="errorlist nonfield"><li>' +
+                    err_message + '</li></ul></div>';
+
+            $(".form-group.name").prepend(err_div);
+        }
+
+        function get_check(avl) {
+            var hdd_count = parseInt($("#id_quantity").val());
+            var hdd_size = parseInt($("#id_size").val());
+            if (hdd_count > parseInt(avl.hdd_count)) {
+                do_msg_for_page('云硬盘数量超过配额,目前所剩配额为' + avl.hdd_count + '个,请在概览页面提交配额申请!');
+                $('input[type=submit]').attr('disabled', 'true');
+            }
+            else if (hdd_size > parseInt(avl.hdd) || hdd_count * hdd_size > parseInt(avl.hdd)) {
+                do_msg_for_page('云硬盘容量超过配额,目前所剩配额为' + avl.hdd + 'G,请在概览页面提交配额申请!');
+                $('input[type=submit]').attr('disabled', 'true');
+            }
+            else {
+                $("#id_show_error_msg_for_page").remove();
+                $('input[type=submit]').removeAttr('disabled');
+            }
+        }
+
+        function get_price(price) {
+            var hdd_count = parseInt($("#id_size").val());
+            var hdd_size = parseInt($("#id_quantity").val());
+            var hour_price = (hdd_count * hdd_size * price.disk_1_G).toFixed(4);
+            var mon_price = horizon.modals.get_mon_price(hour_price);
+            $(".price #price").text(hour_price);
+            $(".small-price #mon_price").text(mon_price);
+
+        }
+
+        $.get(real_url + "/instances/api?avl=avl", function (data) {
+            avl_json = eval('(' + data + ')');
+            get_check(avl_json);
+            $("#id_size").on('click', function () {
+                get_check(avl_json);
+            });
+            $("#id_quantity").on('click', function () {
+                get_check(avl_json);
+            });
+            $("#id_size").on('keyup', function () {
+                get_check(avl_json);
+            });
+            $("#id_quantity").on('keyup', function () {
+                get_check(avl_json);
+            })
+
+
+        });
+        $.get(real_url + "/instances/api?billing_item=billing_item", function (data) {
+            var price_json = eval('(' + data + ')');
+            get_price(price_json);
+            $("#total_fee").append("<div class='not_make_sense'>  云硬盘: "+ "<span class='price'>¥"+ price_json.disk_1_G + "</span>"
+              + " /G/时</div>");
+            $("#id_size").on('click', function () {
+
+                get_price(price_json);
+            });
+
+            $("#id_quantity").on('click', function () {
+
+                get_price(price_json);
+            });
+
+            $("#id_size").on('keyup', function () {
+
+                get_price(price_json);
+            });
+
+            $("#id_quantity").on('keyup', function () {
+
+                get_price(price_json);
+            })
+        })
+    })
+
+    </script>
+{% endblock %}

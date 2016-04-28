@@ -1,0 +1,275 @@
+{% load horizon %}
+<noscript><h3>{{ step }}</h3></noscript>
+<div class="row">
+  <div class="col-sm-6">
+    {% include "horizon/common/_form_fields.html" %}
+  </div>
+  <div class="col-sm-6">
+    {{ step.get_help_text }}
+  </div>
+</div>
+
+<style>
+	.form-group.has-error .error{display:block}
+	.form-group .error{display:none;}
+	.form-group .error.sr-only{
+		position: relative;
+	    width: 300px;
+	    height: 25px;
+	    padding: 5px;
+	    color: #E74C3C;
+	    z-index: 9999;
+	}
+</style>
+
+
+<script>
+  $(".workflow .button-next").attr("disabled", true);
+  if (typeof horizon.membership !== 'undefined') {
+    horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+  } else {
+    addHorizonLoadEvent(function () {
+      horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+    });
+  }
+  
+  var safeToken = $("#id_safeCard").val();
+  var real_url = get_url();
+  var icon = "<i class='fa fa-times-circle font-size14'></i>";
+  var errorcompany=1;
+  var errorpassword=1;
+  var errorconfirm_password=1;
+  var errorname=1;
+  var erroremail=1;
+  var errortelephone=1;
+
+  function get_url() {
+    var url = window.location.pathname;
+    real_url = "/";
+    if (url.split("/")[1] == 'dashboard') {
+      real_url = "/dashboard/"
+    }
+    return real_url;
+  }
+
+  function ErrorInput(id, error) {
+    id_error = "#id_"+ id;
+    obj = $(id_error);
+    obj.parent().children('.error').remove();
+    obj.parent().parent().addClass('has-error');
+    errors='<span id="inputError" class="error sr-only">'+icon+error+'</span>';
+    obj.after(errors);
+  }
+
+  //del error
+  function ErrorDel(items) {
+    obj = $("#id_" + items)
+    obj.parent().children('.error').remove();
+    obj.parent().parent().removeClass('has-error')
+  }
+  var fromErrors = {
+    'name': {
+      'empty': '用户名不能为空哦~',
+      'notype': '格式错误(用户名4-20位，且至少含一个英文字符)',
+      'exsit': '用户名已注册'
+    },
+    'email': {'empty': '邮箱不能为空哦~', 'notype': '邮箱格式错误', 'exsit': '邮箱已注册'},
+    'password': {'empty': '密码不能为空哦~', 'nolen': '密码长度为 6-14 位', 'noblank': '密码禁用空格', 'notype': '密码格式错误哦~'},
+    'confirm_password': {'empty': '确认密码不能为空', 'nosame': '两次输入的密码不同'},
+    'telephone': {'empty': '手机不能为空', 'notype': '手机格式错误', 'exsit': '手机已注册'},
+    'company': {'empty': '公司名不能为空','exsit': '该公司已注册'},
+    'industry': {'empty': '行业不能为空'}
+  };
+
+
+
+ 
+
+
+  function checkuser(param, items) {
+    if (param != '') {
+      param += "&inputsafeToken=" + safeToken
+      $.get(real_url + "member/checkUser/?" + param, function (data) {
+                if (data == 'Exist') {
+	                  if (items == "name") {
+	                    ErrorInput(items,fromErrors[items]['exsit']);
+	                    errorname=1;
+	                  } else if (items == "email") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     erroremail=1;
+	                  } else if (items == "telephone") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     errortelephone=1;
+	                  }else if (items == "company") {
+	                     ErrorInput(items,fromErrors[items]['exsit']);
+	                     errorcompany=1;
+	                  }
+                  return true;
+                }else if (data == 'limitVisit') {
+	                  ErrorInput(items, '非法的访问');
+	                  return true;
+                }else if (data == 'safeTokenTimeout') {
+	                  ErrorInput(items, '安全验证失效,请重新刷新注册页面');
+	                  return true;
+                }else if (data == 'safeTokenError') {
+	                  ErrorInput(items, '安全验证失败,请重新刷新注册页面');
+	                  return true;
+                }
+                else {
+                	  if (items == "name") {
+	                     errorname=0;
+	                  } else if (items == "email") {
+	                     erroremail=0;
+	                  } else if (items == "telephone") {
+	                     errortelephone=0;
+	                  }else if(items=='company'){
+						   checkproject(param,items);
+					  }
+	                  
+	                  if(errorname==0 && erroremail==0 && errortelephone==0 && errorcompany==0 && errorpassword==0 && errorconfirm_password==0){
+	                 	   $(".workflow .button-next").attr("disabled", false);
+	                  }else{
+	                  	   $(".workflow .button-next").attr("disabled", true);
+	                  }
+	                  ErrorDel(items);
+	                  return false;
+                }
+              }
+      )
+    }
+  }
+  
+  //项目名判断
+	function checkproject(param,items){
+	     if(param!='' && items=='company'){
+			 param+="&inputsafeToken="+safeToken
+			  $.get(real_url+"member/checkproject/?"+param,function(data){
+               if(data=='Exist'){
+					   ErrorInput(items,fromErrors[items]['exsit']);
+					   return true;
+					   errorcompany=1;
+				   }else if(data=='limitVisit'){
+					   ErrorInput(items,'非法的访问');
+					   errorcompany=1;
+					   }
+					   else if(data=='safeTokenTimeout'){
+					   ErrorInput(items,'安全验证失效,请重新刷新注册页面');
+					   errorcompany=1;
+					   }else if(data=='safeTokenError'){
+					   ErrorInput(items,'安全验证失败,请重新刷新注册页面');
+					   errorcompany=1;
+					   }
+				   else{
+				         errorcompany=0;
+					   }
+				   if(errorname==0 && erroremail==0 && errortelephone==0 && errorcompany==0 && errorpassword==0 && errorconfirm_password==0){
+                 	     $(".workflow .button-next").attr("disabled", false);
+                   }else{
+                  	     $(".workflow .button-next").attr("disabled", true);
+                   }
+                     ErrorDel(items);
+                     return false;  
+          })
+		}
+	}
+  
+  
+  
+$(document).ready(function(){	
+	  var param = '';
+	  var items = '';
+	  $('.form-group input').blur(function (){
+	  	    val= $(this).val();
+	        param = "inputUsername=" + val;
+	        items = $(this).attr("name");
+	        if(val==''){
+	        	if(items=='company'){
+	        		errorcompany=1;
+	        	}else if(items=='password'){
+	        		errorpassword=1;
+	        	}else if(items=='confirm_password'){
+	        		errorconfirm_password=1;
+	        	}
+	        	if(errorname==0 && erroremail==0 && errortelephone==0 && errorcompany==0 && errorpassword==0 && errorconfirm_password==0){
+	                 	   $(".workflow .button-next").attr("disabled", false);
+	             }else{
+	                  	   $(".workflow .button-next").attr("disabled", true);
+	            }
+	        	ErrorInput(items,fromErrors[items]['empty']);	
+	        	return false;
+	        }else{
+	        	if(items=='company'){
+	        	   param = "compName=" + $(this).val();
+	               checkuser(param, items);
+	        	}else if(items=='password'){
+	        	    var repwd=$("#id_confirm_password").val();
+	        	    if(repwd!=''){
+	        	       if(repwd==val){
+	        	       		errorconfirm_password=0;
+	        	       		ErrorDel("confirm_password");
+	        	       }else{
+	        	          errorconfirm_password=1;
+	        			  ErrorInput("confirm_password",fromErrors["confirm_password"]['nosame']);	
+	        			  $(".workflow .button-next").attr("disabled", true);
+	        			  return false;
+	        	       }	
+	        	    }
+	        		errorpassword=0;
+	        	}else if(items=='confirm_password'){
+	        		var pwd=$("#id_password").val();
+	        		if(pwd!=val){
+	        			errorconfirm_password=1;
+	        			ErrorInput(items,fromErrors[items]['nosame']);	
+	        			$(".workflow .button-next").attr("disabled", true);
+	        			return false;
+	        		}
+	        			errorconfirm_password=0;
+	        		
+	        	}
+             if(items != 'credit_line'){
+             		ErrorDel(items);
+             }
+	         if(errorname==0 && erroremail==0 && errortelephone==0 && errorcompany==0 && errorpassword==0 && errorconfirm_password==0){
+	                 	   $(".workflow .button-next").attr("disabled", false);
+	         }else{
+	                  	   $(".workflow .button-next").attr("disabled", true);
+	         }
+	        }
+	        if(items=='name'){
+	          if(!checkName(val)){
+	                errorename=1;
+	 				ErrorInput(items,fromErrors[items]['notype']);
+	 				$(".workflow .button-next").attr("disabled", true);
+	 			    return false;
+	          }
+	          param = "inputUsername=" + $(this).val();
+	          checkuser(param, items);
+	        }else if(items=='email'){
+	           if(!checkEmail(val)){
+	                     erroremail=1;
+	 					 ErrorInput(items,fromErrors[items]['notype']);
+	 					 $(".workflow .button-next").attr("disabled", true);
+	 					 return false;
+	 			 }
+	          param = "inputEmail=" + $(this).val();
+	          checkuser(param, items);
+	        }else if(items=='telephone'){
+	        	 if(!checkPhone(val)){
+	        			 errortelephone=1;
+	 					 ErrorInput(items,fromErrors[items]['notype']);
+	 					 $(".workflow .button-next").attr("disabled", true);
+	 					 return false;
+	 			 }
+	        	param = "mobile=" + $(this).val();
+	            checkuser(param, items);
+	        }
+	       
+	  })
+
+ })
+ 
+ 
+ 
+</script>
+
+

@@ -1,0 +1,37 @@
+{% load branding horizon i18n %}
+{% load url from future %}
+
+<div id="pma_bg">
+<div id="pma_navigation">
+    <div id="pma_navigation_content">
+    <div id='pma_navigation_header' class='topbar'>
+	    <h1 class="brand">
+		<input type='hidden' id='logoTag' value='{%site_logo%}'>
+		<a id='backLogo' href="{% site_branding_link %}">
+		{% site_branding %}</a>
+		</h1>
+		<div class="btn toggle" style=""><img src="/static/dashboard/img/toggle.png"  alt="" /></div>
+    </div>
+    <div id="pma_navigation_tree" class="list_container highlight">
+    <div id="pma_navigation_tree_content">
+	    <div class="sidebar">
+		  {% horizon_nav %}
+		</div>
+    </div>
+    
+    </div>
+    </div>
+</div>
+</div>
+<script>
+var sc_height=window.screen.availHeight;
+$("#pma_navigation_tree_content").height(sc_height-50);
+
+logoname=$("#logoTag").val();
+      if(logoname!=''){
+     		$("#backLogo").css({'background':'url("/images/'+logoname+'_back.png") left 20px center no-repeat','background-color':'#ffb62e','background-size':'120px 31px'});  
+     	    icon=$("link[rel='shortcut icon']").attr("href",'/images/'+logoname+'.ico')	    
+      }else{
+     		$("#backLogo").removeAttr("style")
+      }
+</script>

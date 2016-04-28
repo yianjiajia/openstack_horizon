@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Monitor Report" %}{% endblock %}
+{% block main %}
+<div class="row">
+  <div class="col-sm-12">
+  {{ tab_group.render }}
+  </div>
+</div>
+{% endblock %}
+
+ {% block js %}
+      {% include "horizon/_scripts.html" %}
+     <script>
+     function cdn (type, domain, start, end) {
+    $.getJSON('json?' + 'type=' + type + '&' + 'domain=' + domain + '&' + 'start=' + start + '&' + 'end=' + end +'&'+'callback=?', function (data) {
+                 var unit, danwei;
+                 if (typeof data[0] == 'undefined' ){
+                 		alert('无报表数据');
+                     return false;
+                 }
+                 var start = data[0][0];
+                 var date_start = start.split(' ')[0];
+                 var date_start_format = date_start.split('-');
+                 var date_start_hms = start.split(' ')[1];
+                 var date_start_hms_format = date_start_hms.split(':');
+                 var to = data[data.length - 1][0];
+                    if (type != 'flow' && type != 'io') {
+                        unit = '';
+                        danwei = 'requests';
+                    }
+                    else if (type != 'requests' && type != 'flow'){
+                        unit = 'Mb/s';
+                        danwei = 'io(Mb/s)';
+                    }
+                    else {
+                        unit = 'MB';
+                        danwei = 'traffic(MB)';
+                    }
+                    var clean_data = [];
+                    for(var i=0;i<data.length;i++){
+                            clean_data.push(data[i][1]);
+                        }
+                 $('#chart').highcharts({
+                     credits: {
+                         enabled: false
+                     },
+                     chart: {
+                         zoomType: 'x'
+                     },
+                     title: {
+                         text: start + '至' + to + '报表'
+                     },
+                     subtitle: {
+                         text: document.ontouchstart === undefined ?
+                                 '在绘图区域中单击并拖动缩放' :
+                                 ''
+                     },
+                     xAxis: {
+                         type: 'datetime'
+
+                     },
+                     yAxis: {
+                         title: {
+                             text:danwei
+                         },
+                         min: 0,
+                         plotLines: [{
+                             value: 0,
+                             width: 1,
+                             color: '#808080'
+                                    }]
+                     },
+                      tooltip: {
+                        valueSuffix: unit
+                      },
+                     legend: {
+                         enabled: false
+                     },
+                     plotOptions: {
+                         area: {
+                             fillColor: {
+                                 linearGradient: {
+                                     x1: 0,
+                                     y1: 0,
+                                     x2: 0,
+                                     y2: 1
+                                 },
+                                 stops: [
+                                     [0, Highcharts.getOptions().colors[0]],
+                                     [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                                 ]
+                             },
+                             marker: {
+                                 radius: 2
+                             },
+                             lineWidth: 1,
+                             states: {
+                                 hover: {
+                                     lineWidth: 1
+                                 }
+                             },
+                             threshold: null
+                         }
+                     },
+
+                     series: [{
+                         type: 'area',
+                         name: danwei,
+                         data: clean_data,
+                         pointStart: Date.UTC(date_start_format[0],date_start_format[1]-1,date_start_format[2],
+                                 date_start_hms_format[0], date_start_hms_format[1],date_start_hms_format[2]),
+                         pointInterval: 300*1000
+                     }]
+                 });
+             });
+         };
+        $(function(){
+             var type = $('#select1 option:selected').val();
+             var domain = $('#select2 option:selected').val();
+             var start = $('#id_start').val();
+             var end = $('#id_end').val();
+             cdn(type, domain, start, end);});
+       $(function(){
+           var start = $('#id_start').val();
+           var end = $('#id_end').val();
+           $.getJSON('json?' + 'type=flow' + '&' + 'domain=all' + '&' + 'start=' + start + '&' + 'end=' + end +'&'+'callback=?',function(data){
+               var flow = 0.0;
+               for(var i=0;i<data.length;i++){
+                   flow += data[i][1];}
+                   $("#total_flow").html((flow/1024).toFixed(2));
+           })
+
+       });
+
+         $("#select1").change(function(){
+             var type = $('#select1 option:selected').val();
+             var domain = $('#select2 option:selected').val();
+             var start = $('#id_start').val();
+             var end = $('#id_end').val();
+             cdn(type, domain, start, end)});
+         $('#select2').change(function(){
+             var type = $('#select1 option:selected').val();
+             var domain = $('#select2 option:selected').val();
+             var start = $('#id_start').val();
+             var end = $('#id_end').val();
+             cdn(type, domain, start, end)});
+         $('#submit').bind('click', function(){
+             var type = $('#select1 option:selected').val();
+             var domain = $('#select2 option:selected').val();
+             var start = $('#id_start').val();
+             var end = $('#id_end').val();
+             cdn(type, domain, start, end)});
+</script>
+ {% endblock %}

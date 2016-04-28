@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Modify Quotas" %}{% endblock %}
+
+{% block main %}
+    {% include 'identity/users/_update_quota.html' %}
+{% endblock %}

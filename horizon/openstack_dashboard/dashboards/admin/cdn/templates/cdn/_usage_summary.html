@@ -1,0 +1,14 @@
+{% load i18n sizeformat %}
+<div style="padding: 12px 20px;">
+    <form action="?" method="get" id="date_form" class="form-inline">
+      <div class="datepicker form-group">
+      {% blocktrans with start=form.start %}
+      <label>From:</label> {{ start }}{% endblocktrans %}
+    </div>
+    <div class="datepicker form-group">
+      {% blocktrans with end=form.end %}
+      <label>To:</label>{{ end }}{% endblocktrans %}
+    </div>
+    <button class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
+  </form>
+</div>

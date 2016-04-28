@@ -1,0 +1,50 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}create_snapshot_form{% endblock %}
+{% block form_action %}{% url 'horizon:instances:images:snapshots:create' instance.id %}{% endblock %}
+
+{% block modal_id %}create_snapshot_modal{% endblock %}
+{% block modal-header %}{% trans "Create Snapshot" %}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+     {% include "horizon/common/_billing_item.html" %}
+    <fieldset>
+    {% include "horizon/common/_form_fields.html" %}
+    </fieldset>
+</div>
+<div class="right">
+    <h3>{% trans "Description:" %}</h3>
+    <p>{% trans "A snapshot is an image which preserves the disk state of a running instance." %}</p>
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+     <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Snapshot" %}" />
+     <a href="{% url 'horizon:instances:images:index' %}" class="btn btn-default secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    $(function(){
+      var instance_id = $("#id_instance_id").val();
+      var url = window.location.pathname;
+      var real_url;
+      if (url.split("/")[1] == 'dashboard'){
+          real_url = "/dashboard"
+      }
+      else{
+          real_url = ""
+      }
+
+    $.get(real_url+"/instances/api?snap_billing="+instance_id,function(data){
+      	  data_json = eval('(' + data + ')');
+          var hour_price = data_json.price.toFixed(4);
+          var mon_price = horizon.modals.get_mon_price(data_json.price);
+          $(".price #price").text(hour_price);
+          $(".small-price #mon_price").text(mon_price);
+    })});
+
+    </script>
+{% endblock %}

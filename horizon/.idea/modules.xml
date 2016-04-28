@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../billing_web/.idea/billing_web.iml" filepath="$PROJECT_DIR$/../billing_web/.idea/billing_web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../business/.idea/business.iml" filepath="$PROJECT_DIR$/../business/.idea/business.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../django_openstack_auth/.idea/django_openstack_auth.iml" filepath="$PROJECT_DIR$/../django_openstack_auth/.idea/django_openstack_auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/horizon.iml" filepath="$PROJECT_DIR$/.idea/horizon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../naas/.idea/naas.iml" filepath="$PROJECT_DIR$/../naas/.idea/naas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../naas_web/.idea/naas_web.iml" filepath="$PROJECT_DIR$/../naas_web/.idea/naas_web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../python-glanceclient/.idea/python-glanceclient.iml" filepath="$PROJECT_DIR$/../python-glanceclient/.idea/python-glanceclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../python-keystoneclient/.idea/python-keystoneclient.iml" filepath="$PROJECT_DIR$/../python-keystoneclient/.idea/python-keystoneclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../python-novaclient/.idea/python-novaclient.iml" filepath="$PROJECT_DIR$/../python-novaclient/.idea/python-novaclient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../zabbix-openstack/.idea/zabbix-openstack.iml" filepath="$PROJECT_DIR$/../zabbix-openstack/.idea/zabbix-openstack.iml" />
+    </modules>
+  </component>
+</project>

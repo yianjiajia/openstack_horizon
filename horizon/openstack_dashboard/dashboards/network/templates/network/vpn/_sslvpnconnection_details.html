@@ -1,0 +1,36 @@
+{% load i18n sizeformat parse_date %}
+{% load url from future %}
+
+<div class="info row-fluid detail">
+  <hr class="header_rule">
+  <dl>
+    <dt>{% trans "Name" %}</dt>
+    <dd>{{ sslvpnconnection.name|default:_("None") }}</dd>
+
+    <dt>{% trans "Description" %}</dt>
+    <dd>{{ sslvpnconnection.description|default:_("None") }}</dd>
+
+    <dt>{% trans "ID" %}</dt>
+    <dd>{{ sslvpnconnection.id }}</dd>
+
+    <dt>{% trans "Project ID" %}</dt>
+    <dd>{{ sslvpnconnection.tenant_id }}</dd>
+
+    <dt>{% trans "VPN Service" %}</dt>
+    {% url 'horizon:network:vpn:vpnservicedetails' sslvpnconnection.vpnservice_id as vpnservice_url %}
+    <dd><a href="{{ vpnservice_url}}">{{ sslvpnconnection.vpnservice.name_or_id }}</a></dd>
+
+    <dt>{% trans "SSL VPN Credential" %}</dt>
+    {% url 'horizon:network:vpn:sslvpncredentialdetails' sslvpnconnection.credential_id as vpncredential_url %}
+    <dd><a href="{{ vpncredential_url}}">{{ sslvpnconnection.vpncredential.name_or_id }}</a></dd>
+
+    <dt>{% trans "Remote peer subnet" %}</dt>
+    <dd>{{ sslvpnconnection.client_address_pool_cidr }}</dd>
+
+    <dt>{% trans "Admin State" %}</dt>
+    <dd>{{ sslvpnconnection.admin_state_up }}</dd>
+
+    <dt>{% trans "Status" %}</dt>
+    <dd>{{ sslvpnconnection.status }}</dd>
+  </dl>
+</div>

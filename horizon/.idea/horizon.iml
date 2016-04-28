@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$" />
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="django_openstack_auth" />
+    <orderEntry type="module" module-name="python-glanceclient" />
+    <orderEntry type="module" module-name="python-keystoneclient" />
+    <orderEntry type="module" module-name="python-novaclient" />
+    <orderEntry type="module" module-name="naas" />
+    <orderEntry type="module" module-name="zabbix-openstack" />
+    <orderEntry type="module" module-name="naas_web" />
+    <orderEntry type="module" module-name="business" />
+    <orderEntry type="module" module-name="billing_web" />
+  </component>
+  <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/horizon/templates" />
+      </list>
+    </option>
+  </component>
+</module>

@@ -1,0 +1,24 @@
+{% load i18n sizeformat %}
+
+<div class="info row detail">
+  <h4>{% trans "Information" %}</h4>
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+    <dt>{% trans "Name" %}</dt>
+    <dd>{{ port.name|default:_("None") }}</dd>
+	<dt>{% trans "Description" %}</dt>
+	<dd>{{ port.description }}</dd>
+    <dt>{% trans "Inner_ip" %}</dt>
+    <dd>{{ port.inner_ip|default:_("None") }}</dd>
+    <dt>{% trans "Floating_ip" %}</dt>
+    <dd>{{ port.floating_ip }}</dd>
+    <dt>{% trans "Subnet" %}</dt>
+    <dd>{{ port.subnet }}</dd>
+    <dt>{% trans "Host" %}</dt>
+    <dd>{{ port.host }}</dd>
+    <dt>{% trans "Status" %}</dt>
+    <dd>{{ port.status|default:_("Unknown")|title }}</dd>
+    <dt>{% trans "Created_at" %}</dt>
+    <dd>{{ port.created_at|parse_isotime }}</dd>
+  </dl>
+</div>

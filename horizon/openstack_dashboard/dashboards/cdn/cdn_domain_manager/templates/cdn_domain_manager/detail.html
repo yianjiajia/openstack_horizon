@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% load i18n %} {% block title %}{% trans "Domain Manager" %}{% endblock %} {% block main %}
+<div class="row">
+	<div class="col-sm-12">
+		<ul class="breadcrumb">
+			<li><a
+				href="{% url 'horizon:cdn:cdn_domain_manager:index' %}">{%trans "Domain List" %}</a> <span class="divider"></span></li>
+			<li class="active">{{ domain.domain_name }}</li>
+		</ul>
+		<div class="row">
+			<div class="col-sm-5">
+				<div class="row-fluid">
+					<div class="block span5 well">
+						<a href="#domain" data-toggle="collapse"
+							class="block-heading breadcrumb"><strong>{% trans "Domain Info" %}</strong><a href="{{ modify_url }}" class="ajax-modal"><span class="pull-right fa fa-pencil"></span></a></a>
+						<div id="domain" class="block-body collapse in">
+							<ul class="list-group">
+								<li class="list-group-item"><label>{% trans "Domain Name"%}</label> <span class="pull-right">{{ domain.domain_name}}</span></li>
+								<li class="list-group-item"><label>{% trans "CNAME"%}</label> <span class="pull-right">{{ domain.domain_cname }}</span>
+								<li class="list-group-item"><label>{% trans "Origin Domain Type"%}</label><span class="pull-right">{{domain.source_type }}</span></li>
+								<li class="list-group-item"><label>{% trans "Origin Address" %}</label> <span class="pull-right"> <select>
+											{% for i in domain.source_address %}
+											<option>{{ i }}</option> {% endfor %}
+									</select></span></li>
+								<li class="list-group-item"><label>{% trans "Status" %}</label> <span class="pull-right">{{ domain.status}}</span></li>
+								<li class="list-group-item"><label>{% trans "Create time" %}</label><span class="pull-right">{{ domain.created_at}}</span></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="row-fluid">
+					<div class="block span5 well">
+						<a href="#cache" class="block-heading breadcrumb"
+							data-toggle="collapse"><strong>{% trans "Cache Rule"%}</strong></a>
+						<div id="cache" class="block-body collapse in">{{cache_table.render }}</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-7 well">
+				<a href="#access" class="block-heading breadcrumb"
+					data-toggle="collapse"><strong>{% trans "Access Control" %}</strong></a>
+				<div id="access" class="block-body collapse in">{{access_table.render }}</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

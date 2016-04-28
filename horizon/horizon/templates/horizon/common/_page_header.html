@@ -1,0 +1,25 @@
+{% load branding i18n %}
+{% load context_selection %}
+{% block page_header %}
+  <div class='page-header'>
+  {% if title != "概况" %}
+    <h1>{{ title }}</h1>
+  {% endif %}
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token %}
+      </form>
+    {% endif %}
+  </div>
+  {% if account_is_frozen %}
+    {% if title != "概况" %}
+    <div class="account_is_frozen" style="padding-left: 15px;">账户已透支<span>，请先<a class="pay_bt" href="{% site_payment_url %}" target="_blank">充值</a></span>  <span style="float: right;padding-right: 6px;color: #000;"> <a style="color: red;padding-top: 5px;" class="close" data-dismiss="modal" onclick="$('.account_is_frozen').hide()">×</a></span> </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+<script>
+var isSubUser='{% isSubUser %}'
+if(isSubUser=='True'){
+	$('.pay_bt').parent().hide()
+}
+</script>

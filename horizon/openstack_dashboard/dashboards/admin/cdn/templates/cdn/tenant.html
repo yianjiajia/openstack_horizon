@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "CDN" %}{% endblock %}
+{% block main %}
+    <div class="pull-right">
+    {% include "admin/cdn/_tenant.html" %}<hr></div>
+    <div id="message_box" style="width: 200px;height: 50px"></div>
+    <div class="row">
+        <div class="col-sm-12">
+            {% include "admin/cdn/chart.html" %}</div>
+        </div>
+    <hr>
+   {{ table.render }}
+{% endblock %}
+ {% block js %}
+      {% include "horizon/_scripts.html" %}
+     <script src="/static/dashboard/js/cdn.js"></script>
+ {% endblock %}

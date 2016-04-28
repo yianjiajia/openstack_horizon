@@ -1,0 +1,8 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load horizon i18n %}
+
+{% block modal-body-right %}
+  <script type="text/javascript" charset="utf-8">
+    $("#id_limit_speed").parent().append('<span class="help-block">{% trans "Should little than Total Bandwidth, Set -1 or 0 If want have no limit." %}</span>');
+  </script>
+{% endblock %}

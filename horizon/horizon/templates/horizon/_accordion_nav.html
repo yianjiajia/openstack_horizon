@@ -1,0 +1,88 @@
+{% load horizon i18n %}
+{% load url from future %}
+
+<dl class="nav_accordion">
+{% for dashboard, panel_info in components %}
+  {% if user|has_permissions:dashboard %}
+
+
+    <dt {% if current.slug == dashboard.slug and dashboard.slug == "overview" %}class="active overview_dt"{% elif current.slug == dashboard.slug and dashboard.slug != "overview"%} class="active"{% endif %}>
+
+        {% if dashboard.slug == "overview" %}
+            <a id="out_over"><em class="icon-gauge"></em>{{ dashboard.name }} </a>
+        {% elif dashboard.slug == "instances" %}
+            <em class="icon-host"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "storage" %}
+            <em class="icon-disk"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "network" %}
+            <em class="icon-network"></em>网络管理
+        {% elif dashboard.slug == "cdn" %}
+            <em class="icon-cdn"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "security" %}
+            <em class="icon-safe"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "admin" %}
+            <em class="icon-account"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "identity" %}
+            <em class="icon-account"></em>{{ dashboard.name }}
+        {% elif dashboard.slug == "settings" %}
+            <em class="icon-cogs"></em>{{ dashboard.name }}
+        {% endif %}
+
+        {% if dashboard.slug != "overview" %}<span class="fa pull-right"></span>{% endif %}
+
+    </dt>
+    {% if current.slug == dashboard.slug %}
+    <dd>
+    {% else %}
+    <dd style="display:none;">
+    {% endif %}
+    {% for heading, panels in panel_info.iteritems %}
+      {% with panels|has_permissions_on_list:user as filtered_panels %}
+      {% if filtered_panels %}
+        {% if heading %}
+        <div>
+          <h4>
+            {{ heading }}
+            <span class="fa pull-right"></span>
+          </h4>
+        {% endif %}
+        <ul{% if heading and heading != current_panel_group %} class="hidden"{% endif %}>
+        {% for panel in filtered_panels %}
+            {% if panel.slug != "overview" %}
+            <li><a href="{{ panel.get_absolute_url }}" {% if current.slug == dashboard.slug and current_panel == panel.slug %}class="active"{% endif %} tabindex="{{ forloop.counter }}"><span class="icon-point"></span>{{ panel.name }}</a></li>
+
+            {% else %}<a style="display: none" id="out_over_a" href="{{ panel.get_absolute_url }}"></a>
+            {% endif %}
+
+        {% endfor %}
+        </ul>
+        {% if heading %}
+          </div>
+        {% endif %}
+      {% endif %}
+      {% endwith %}
+    {% endfor %}
+    </dd>
+  {% endif %}
+{% endfor %}
+</dl>
+<style>
+    #out_over{
+        text-decoration: none;
+    }
+</style>
+<script language="JavaScript">
+
+    $(function(){
+        $("dt #out_over").click(function(){
+            $("#out_over_a")[0].click();
+        })
+    })
+
+    $(function(){
+        $("dt #out_over").parent().click(function(){
+            $("#out_over_a")[0].click();
+        })
+    })
+
+</script>

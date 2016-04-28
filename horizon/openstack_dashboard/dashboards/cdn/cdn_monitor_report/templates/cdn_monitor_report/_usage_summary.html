@@ -1,0 +1,28 @@
+{% load i18n sizeformat %}
+<div>
+  <div class="form-inline">
+      <div class="form-group">
+      <label>{% trans 'Monitoring index'%}</label>
+         <select id="monitor_type" name="monitor">
+             <option value ="flow">{% trans 'Flow Monitoring'%}</option>
+               <option value ="io">{% trans 'IO Monitoring'%}</option>
+                   <option value ="requests">{% trans 'Requests Monitoring'%}</option>
+           </select>
+             <label>{% trans 'Domain Select'%}</label>
+                  <select id="id_domain_id" name="domain_id">
+                    {% for i in domain %}
+                       <option value ="{{ i.domain_id }}">{{ i.domain_name }}</option>
+                          {% endfor %}
+                     </select>
+      </div>
+      <div class="datepicker form-group">
+      {% blocktrans with start=form.start %}
+      <label>From:</label> {{ start }}{% endblocktrans %}
+    </div>
+    <div class="datepicker form-group">
+      {% blocktrans with end=form.end %}
+      <label>To:</label>{{ end }}{% endblocktrans %}
+    </div>
+    <button class="btn btn-primary" id="submit" style="  margin-bottom: 0px;margin-left: 20px;padding: 2px 8px;">{% trans "Submit" %}</button>
+ </div>
+</div>

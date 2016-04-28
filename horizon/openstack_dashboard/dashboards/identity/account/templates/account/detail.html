@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "User Details" %}{% endblock %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-sm-12">
+      {% include "identity/account/_detail_overview.html" %}
+    </div>
+    <div class="col-sm-12">
+      {% include "identity/account/_quota_summary.html" %}
+    </div>
+  </div>
+{% endblock %}

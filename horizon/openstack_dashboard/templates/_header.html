@@ -1,0 +1,120 @@
+{% load branding i18n %}
+{% load url from future %}
+{% load context_selection %}
+
+<h1 class="brand">
+
+</h1>
+<div class="btn toggle" style=""><img src="/static/dashboard/img/toggle.png"  alt="" /></div>
+
+<div class="switcher_bar">
+  <div class="dropdown context-selection">
+    <button class="btn btn-default btn-topnav dropdown-toggle">
+        <span class="icon-down-dir pull-left">区域：</span>
+        {% show_overview %}
+    </button>
+    <div class="dropdown-menu topbar-dropdown-menu">
+      <div class="context-lists">
+{#        {% show_domain_list %}#}
+{#        {% show_project_list %}#}
+        {% show_region_list %}
+      </div>
+{#      <div class="footer">#}
+{#        <a href="{% url 'horizon:identity:projects:index' %}">#}
+{#            <span class="fa fa-list-ul"></span>#}
+{#            {% trans "More Projects" %}#}
+{#        </a>#}
+{#      </div>#}
+    </div><!-- end of dropdown-menu -->
+  </div><!-- end of context-selection -->
+</div><!-- end of context-box -->
+
+<div class="switcher_bar">
+
+   <div class="dropdown context-selection">
+
+        <div class="btn btn-default btn-topnav dropdown-toggle btn_project_list" style="min-width: 100px;">
+
+           <span class="icon-down-dir" style="display: inline-block">项目：</span>
+
+           <span style="display: inline-block">{% show_project_overview %}</span>
+
+        </div>
+
+       <div class="dropdown-menu topbar-dropdown-menu">
+
+            <div class="context-lists">
+
+               {% show_project_list %}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+   {% show_advert %}
+<div id="user_info" class="pull-right">
+  <div id="profile_editor_switcher" class="dropdown switcher_bar" tabindex='1'>
+    <button class="btn btn-default btn-topnav dropdown-toggle">
+      <span class="fa fa-user"></span>
+      {{ request.user.username }}
+      <span class="caret"></span>
+    </button>
+    <ul id="editor_list" class="dropdown-menu topbar-dropdown-menu pull-right">
+      <li>
+        <a href="{% url 'horizon:settings:user:index' %}">
+          <span class="fa fa-cog"></span>
+          {% trans "Settings" %}
+        </a>
+
+      </li>
+{#      {% if HORIZON_CONFIG.help_url %}#}
+{#        <li>#}
+{#          <a href="{{ HORIZON_CONFIG.help_url }}" target="_blank">#}
+{#            <span class="fa fa-question-circle"></span>#}
+{#            {% trans "User Guide" %}#}
+{#          </a>#}
+{#        </li>#}
+{#      {% endif %}#}
+      <li class="divider"></li>
+      <li>
+        <a href="{% url 'logout' %}">
+          <span class="fa fa-sign-out"></span>
+          {% trans "Sign Out" %}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+{#  {% include "horizon/common/_region_selector.html" %}#}
+
+</div>
+
+<div class="syscloud_panel pull-right" >
+   <a href='{%site_billing_url%}'><button class="btn charge_btn">费用中心</button></a>
+{#        <button class="btn console_btn">控制台</button>#}
+		<div id="help_workorder" style="float: right;">
+        <a href="{{ HORIZON_CONFIG.help_url }}" target="_blank"><button class="btn console_btn">帮助</button></a>
+        <a href="{{ HORIZON_CONFIG.workorder_url }}" ><button class="btn console_btn">工单</button></a>
+        </div>
+</div>
+
+
+<script src="/static/dashboard/js/tool.js"></script>
+<script language="JavaScript">
+      var horizonWEBROOT="";
+      if(horizonWEBROOT=="")
+           horizonWEBROOT=$("#user_info .fa-sign-out").parent().parent().find("a").attr("href");
+      if(horizonWEBROOT){
+              horizonWEBROOT=horizonWEBROOT.replace('auth/logout/','')   
+      }else{
+              horizonWEBROOT="/";
+      }
+      checkout_browser(); //yz  browser
+
+</script>
+
+

@@ -1,0 +1,7 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "You may update LoadBalancer attributes here: edit name, load balancing method, port, session persistence, connection limit, health check, delay, timeout, max retries." %}</p>
+{% endblock %}

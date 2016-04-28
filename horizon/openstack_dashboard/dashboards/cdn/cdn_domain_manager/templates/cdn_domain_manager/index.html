@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load branding i18n %}
+{% block title %}{% trans "Domain Manager" %}{% endblock %}
+{% block page_header %}
+  <div class='page-header'>
+    <h1>{{ _("Domain List") }}</h1>
+    {% if actions %}
+      <form class='actions_column pull-right' action='{{ url }}' method="POST">
+        {% csrf_token %}
+      </form>
+    {% endif %}
+  </div>
+
+  <div class="account_is_frozen">
+    <div class="col-xs-4">
+      <!--<a class="pay_bt ajax-modal" href="{% url 'horizon:cdn:cdn_domain_manager:modifyaccountmode' %}">-->
+        <!--{% trans "Modify accounting mode" %}</a>-->
+      <label style="color: #777;font-weight:normal;">{% trans "Current month accounting mode:" %}</label>
+      <label >{{ current_mode }}</label>
+      {% if update_mode %}
+        <label style="color: #777;font-weight:normal;">{% trans "Next month accounting mode:" %}</label>
+        <label>{{ update_mode }}</label>
+      {% endif %}
+    </div>
+
+    {% if account_is_frozen %}
+      <div class="col-xs-4">账户已透支，请先 <span><a class="pay_bt" href="{% site_payment_url %}"
+                                              target="_blank">充值</a></span>
+      </div>
+    {% endif %}
+  </div>
+{% endblock page_header %}
+
+{% block main %}
+  <div class="row">
+    <div class="col-sm-12">
+      {{ table.render }}
+    </div>
+  </div>
+{% endblock %}
+
+
+{% block js %}
+  {% include "horizon/_scripts.html" %}
+  <script>
+    var account_is_frozen = {{ account_is_frozen }};
+    if (account_is_frozen) {
+      $("#DomainManager__action_Enable").removeAttr('data-batch-action');
+      $("#DomainManager__action_Enable").addClass('disabled');
+    }
+  </script>
+{% endblock %}

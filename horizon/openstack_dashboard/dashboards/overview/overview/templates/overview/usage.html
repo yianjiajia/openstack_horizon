@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+
+{% block main %}
+  {% include "overview/overview/overview.html" %}
+
+{% endblock %}
+{% block css %}
+        {% include "_stylesheets.html" %}
+          <link rel="stylesheet" href="/static/dashboard/scss/_horizon.css" type="text/css" media="screen">
+          <link rel="stylesheet" href="{% static 'dashboard/scss/jquery_guide.css' %}" type="text/css" >
+{% endblock %}
+{% block js %}
+      {% include "horizon/_scripts.html" %}
+     <script src="{% static 'dashboard/js/jquery.guide.js' %}"></script>
+ {% endblock %}

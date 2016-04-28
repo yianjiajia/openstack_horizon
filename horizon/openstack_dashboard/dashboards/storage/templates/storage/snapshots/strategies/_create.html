@@ -1,0 +1,16 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+
+{% block modal-body-right %}
+<h3>{% trans "Description:" %}</h3>
+<p>{% block title %}{% trans "Snapshot Strategies are rules that auto create snapshots for volumes." %}{% endblock %}</p>
+<ol>
+<li>{% trans "Strategy is only available after the user is enabled" %}</li>
+<li>{% trans "Snapshot can only be created when the volume is used" %}</li>
+<li>{% trans "When the number of snapshots is greater than the maximum number of reservations, choose to delete the oldest snapshot" %}</li>
+</ol>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    </script>
+{% endblock %}

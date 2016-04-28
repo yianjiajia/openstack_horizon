@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Images" %}{% endblock %}
+
+{% block main %}
+  {{ table.render }}
+{% endblock %}
+{% block js %}
+    {% include "horizon/_scripts.html" %}
+    <script type="text/javascript">
+        $(
+                function(){
+
+                    if($(".table_filter.btn-group").children().first().hasClass('active')){
+                      $("#images__action_create").show();
+                      $("#images__action_delete").show();
+                    }
+
+                    if($(".table_filter.btn-group").children().last().hasClass('active')){
+                      $("#images__action_create").hide();
+                      $("#images__action_delete").hide();
+                    }
+                    $(".table_filter.btn-group").children().first().click(function(){
+                      $("#images__action_create").show();
+                      $("#images__action_delete").show();
+                    });
+
+                    $(".table_filter.btn-group").children().last().click(function(){
+                      $("#images__action_create").hide();
+                      $("#images__action_delete").hide();
+                    })
+
+                }
+        )
+    </script>
+{% endblock %}

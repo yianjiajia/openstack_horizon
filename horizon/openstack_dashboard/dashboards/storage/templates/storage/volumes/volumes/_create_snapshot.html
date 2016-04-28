@@ -1,0 +1,41 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block modal-body-right %}
+  <div class="quota-dynamic">
+    {% include "storage/volumes/volumes/_snapshot_limits.html" with usages=usages snapshot_quota=True %}
+  </div>
+{% endblock %}
+
+{% block modal-footer %}
+  {% if attached %}
+    <input class="btn btn-primary btn-warning pull-right" type="submit" value="{% trans "Create Volume Snapshot (Force)" %}" />
+  {% else %}
+    <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Volume Snapshot" %}" />
+  {% endif %}
+  <a href="{% url 'horizon:storage:volumes:index' %}" class="btn btn-default secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}
+{% block modal-js %}
+    <script type="text/javascript">
+    $(function(){
+      var instance_id = $("#id_volume_id").val();
+      var url = window.location.pathname;
+      var real_url;
+      if (url.split("/")[1] == 'dashboard'){
+          real_url = "/dashboard"
+      }
+      else{
+          real_url = ""
+      }
+
+    $.get(real_url+"/instances/api?volume_id="+instance_id,function(data){
+      	  data_json = eval('(' + data + ')');
+          var hour_price = data_json.price.toFixed(4);
+          var mon_price = horizon.modals.get_mon_price(data_json.price);
+          $(".price #price").text(hour_price);
+          $(".small-price #mon_price").text(mon_price);
+    })});
+
+    </script>
+{% endblock %}

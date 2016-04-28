@@ -1,0 +1,18 @@
+client
+remote ${server_addr}
+;port 1194
+proto tcp
+dev tun
+ping 10
+comp-lzo
+verb 4
+mute 10
+<ca>
+${ca_crt_CONTENT}
+</ca>
+<cert>
+${client_crt_CONTENT}
+</cert>
+<key>
+${client_key_CONTENT}
+</key>

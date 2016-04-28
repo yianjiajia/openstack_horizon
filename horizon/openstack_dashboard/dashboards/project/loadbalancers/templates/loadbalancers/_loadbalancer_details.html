@@ -1,0 +1,94 @@
+{% load i18n sizeformat parse_date %}
+
+<div class="info row detail">
+  <hr class="header_rule">
+  <dl class="dl-horizontal">
+  <div class="container-fluid">
+    <div class='row'>
+        <div class=" col-md-4">
+            <big>{% trans "Basic Info" %}</big>
+                <table class="table">
+                <tr>
+                    <th>{% trans "Name" %}</th>
+                    <th>{% trans "Network" %}</th>
+                    <th>{% trans "Floating IP" %}</th>
+                    <th>{% trans "Internal IP" %}</th>
+                    <th>{% trans "Status" %}</th>
+                    <th>{% trans "Create time" %}</th>
+                </tr>
+                <tr>
+                    <td>{{ pool.name|default:_("-") }}</td>
+                    <td>{{ pool.subnet.cidr|default:_("-") }}</td>
+                    <td>{{ pool.floating_ip }}</td>
+                    <td>{{ pool.vip.address }}</td>
+                    <td>{{ pool.status }}</td>
+                    <td>{{ pool.created_at }}</td>
+                </tr>
+                </table>
+       </div>
+	   <div class="col-md-7">
+        <big>{% trans "Details" %}</big>
+            <div >
+                <table class="table">
+                <tr>
+                    <th>{% trans "Connection Limit" %}</th>
+                    <th>{% trans "Protocol" %}</th>
+                    <th>{% trans "Port" %}</th>
+                    <th>{% trans "Session Persistence" %}</th>
+                    <th>{% trans "Cookie Name" %}</th>
+                </tr>
+                <tr>
+                    <td>{{ pool.vip.connection_limit }}</td>
+                    <td>{{ pool.vip.protocol }}</td>
+                    <td>{{ pool.vip.protocol_port }}</td>
+                    <td> {{ pool.vip.session_persistence.type }}</td>
+                    <td> {{ pool.vip.session_persistence.cookie_name |default:_("-") }}</td>
+                </tr>
+                </table>
+
+                <div><strong>{% trans "Health Monitors" %}</strong></div>
+                <table class="table">
+                <tr>
+                    <th>{% trans "Type" %}</th>
+                    <th>{% trans "Delay" %}</th>
+                    <th>{% trans "Timeout" %}</th>
+                    <th>{% trans "Max Retries" %}</th>
+                </tr>
+                {% if pool.health_monitors %}
+                 {% for monitor in pool.health_monitors %}
+                <tr>
+                    <td>{{ monitor.type }}</td>
+                    <td>{{ monitor.delay }}</td>
+                    <td>{{ monitor.timeout }}</td>
+                    <td> {{ monitor.max_retries }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                </table>
+
+
+                <div><strong>{% trans "Backend Servers" %}</strong></div>
+                <table class="table">
+                    <tr>
+                        <th>{% trans "Internal IP" %}</th>
+                        <th>{% trans "Port" %}</th>
+                        <th>{% trans "Weight" %}</th>
+                        <th>{% trans "Status" %}</th>
+                    </tr>
+                {% if pool.members %}
+                {% for member in pool.members %}
+                <tr>
+                    <td>{{ member.address }}</td>
+                    <td>{{ member.protocol_port }}</td>
+                    <td>{{ member.weight }}</td>
+                    <td>{{ member.status }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+                </table>
+            </div>
+       </div>
+    </div>
+  </div>
+  </dl>
+</div>

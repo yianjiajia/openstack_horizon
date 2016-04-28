@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Edit VPN Service" %}{% endblock %}
+
+{% block main %}
+  {% include 'network/vpn/_update_vpnservice.html' %}
+{% endblock %}

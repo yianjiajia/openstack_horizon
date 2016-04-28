@@ -1,0 +1,72 @@
+{% extends "horizon/client_side/template.html" %}
+{% load horizon %}
+{% load i18n %}
+
+{% block id %}del_instance_modal_template{% endblock %}
+
+{% block template %}{% spaceless %}{% jstemplate %}
+<div class="modal" data-backdrop="[[modal_backdrop]]">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class='modal-header'>
+        <a class='close' data-dismiss='modal'>&times;</a>
+        <h3 class="modal-title">[[title]]</h3>
+      </div>
+      <div class='modal-body'>
+          <div class="alert alert-warning" id="del_instance_message">
+              {% trans "Terminated instances are not recoverable,please confirm your selection." %}
+              {% trans "When the server is removed, the default retention system and data disk," %}
+              {% trans "the associated IP will be automatically tied." %}
+          </div>
+          <table class="table table-bordered table-striped datatable">
+              <thead>
+              <tr class="tablesorter-headerRow">
+                  <th>
+                      {% trans "Instance Name" %}
+                  </th>
+                  <th>
+                       {% trans "Floating IP" %}
+                  </th>
+                  <th>
+                       {% trans "Disk Operation" %}
+                  </th>
+              </tr>
+              </thead>
+                [[#body]]
+              <tr>
+                <th>[[instance_name]]</th>
+                  <th>[[floating_ip]]</th>
+                   <th>
+                        <span>
+                       <label>{% trans "Delete system drive" %}
+                       </label> <select name="system_disk">
+                                <option value=0>{% trans "No" %}</option>
+                                <option value=1>{% trans "Yes" %}</option>
+                            </select>
+                       </span>
+                       [[#has_not_data_vol]]
+                       <span class="hide">
+                        [[/has_not_data_vol]]
+                            <span style="margin-left: 50px">
+                        <label>{% trans "Delete data drive" %}
+                        </label> <select name="data_disk">
+                                <option value=0>{% trans "No" %}</option>
+                                <option value=1>{% trans "Yes" %}</option>
+                            </select>
+                         </span>
+                            [[#has_not_data_vol]]
+                        </span>
+                        [[/has_not_data_vol]]
+                   </th>
+            </tr>
+              [[/body]]
+          </table>
+      </div>
+      <div class='modal-footer'>
+        <a href='#' class='btn btn-primary'>[[confirm]]</a>
+        <a href='#' class='btn btn-default cancel' data-dismiss='modal'>[[cancel]]</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endjstemplate %}{% endspaceless %}{% endblock %}

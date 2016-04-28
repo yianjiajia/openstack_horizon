@@ -1,0 +1,170 @@
+{% extends "horizon/common/_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block form_id %}rebuild_instance_form{% endblock %}
+{% block form_action %}{% url "horizon:instances:instances:rebuild" instance_id %}{% endblock %}
+
+{% block modal_id %}rebuild_instance_modal{% endblock %}
+{% block modal-header %}{% trans "Rebuild Instance" %}{% endblock %}
+
+{% block modal-body %}
+<div class="left">
+  <fieldset>
+  {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
+</div>
+
+<script type="text/javascript">
+
+    g_is_allow_inject_passwd_for_rebuild = 0;
+
+    function hide_passwd_input(is_allow_inject_passwd) {
+       $(".form-group").slice(1).each(function(index){
+              if (is_allow_inject_passwd) {
+                  $(this).show();
+                  $(this).addClass('required');
+              } else {
+                  $(this).hide();
+              }
+       });
+       g_is_allow_inject_passwd_for_rebuild = is_allow_inject_passwd;
+    }
+
+    g_avl_hdd = 0;
+    g_select_instance_boot_gb = 0;
+    
+    function do_msg_for_rebuild(validate, err_message) {
+	   if (!validate) {
+	      $("#id_show_error_msg_for_rebuild").remove();
+	      var err_div = '<div id="id_show_error_msg_for_rebuild" class="alert alert-message alert-danger">' +
+	                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' + 
+	      				'<ul class="errorlist nonfield"><li>' +
+	                    err_message + '</li></ul></div>';
+	      $("#rebuild_instance_form .left").prepend(err_div);
+	   }
+	   return validate;
+	}
+
+    function validate_boot_volume_is_has_child(has_child) {
+    	if (!has_child) return;
+    	do_msg_for_rebuild(!has_child, "原云服务器的系统盘存在快照，请手动删除之后再执行此操作！");
+    	$('#rebuild_instance_form .modal-footer .btn-primary').attr('disabled','true');
+        $('#id_image').attr('disabled', 'true');
+    }
+
+    g_avl_hdd = 0;
+    g_select_instance_boot_gb = 0;
+
+    $(function(){
+        var url = window.location.pathname;
+        var real_url;
+        if (url.split("/")[1] == 'dashboard'){
+          real_url = "/dashboard"
+        } else {
+          real_url = ""
+        }
+        $.get(real_url+"/instances/api?avl=avl",function(data)　{
+        　　data_json = eval('(' + data + ')');
+　　　　　　　　　　g_avl_hdd = data_json.hdd;
+        });
+        $.get(real_url+"/instances/api?instance_id={{ instance_id }}",function(data)　{
+          data_json = eval('(' + data + ')');
+          g_select_instance_boot_gb = data_json.boot_gb;
+          validate_boot_volume_is_has_child(parseInt(data_json.has_child));
+        });
+    });
+
+    $(function(){
+      function validate_avl_volume(image_min_disk) {
+          var is_should_rebuild = ((g_avl_hdd + g_select_instance_boot_gb) >= image_min_disk);
+          do_msg_for_rebuild((is_should_rebuild), "剩余配额空间不足，无法重建新镜像！(剩余配额:" +
+                 g_avl_hdd + "G, 原系统盘:" + g_select_instance_boot_gb + "G, 新镜像盘:" + image_min_disk + "G)");
+          if (is_should_rebuild) {
+              $('#rebuild_instance_form .modal-footer .btn-primary').removeAttr('disabled');
+          } else {
+              $('#rebuild_instance_form .modal-footer .btn-primary').attr('disabled','true');
+          }
+      }
+
+      $("#id_image").change(function(){
+        var image_id = $(this).val();
+        var url = window.location.pathname;
+        var real_url;
+        if (url.split("/")[1] == 'dashboard'){
+          real_url = "/dashboard"
+        } else {
+          real_url = ""
+        }
+        $.get(real_url+"/instances/api?image_id="+image_id,function(data){
+          data_json = eval('(' + data + ')');
+          hide_passwd_input(data_json.is_allow_inject_passwd);
+          validate_avl_volume(data_json.min_disk);
+        });
+      });
+	
+	  function validate_passwd_rules_for_rebuild(admin_pass) {
+	      var re=/^(?=.*^[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";\'<>?,.\/]).{8,64}$/g;
+	      return re.test(admin_pass);
+	  }
+
+      function validate_username_rules_for_rebuild(username) {
+          var re=/^[^/\\\[\]":;|<>+=,?*]*$/;
+          return re.test(username);
+    　　}
+
+      function is_chinese_char(str) {
+          var re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
+          return re.test(str);
+      }
+
+      function is_fullwidth_char(str) {
+          var re=/[\uFF00-\uFFEF]/;
+          return re.test(str);
+      }
+	    
+	  function validate_username_for_rebuild(username) {
+	      if (!g_is_allow_inject_passwd_for_rebuild) {
+	          return true;
+	      }
+	      return do_msg_for_rebuild((username.length > 0), "请输入实例登陆的用户名！") &&
+	             do_msg_for_rebuild((username != 'root' && username != 'Administrator'), "root/Administrator为系统用户，请设置其他用户名！") &&
+	             do_msg_for_rebuild(validate_username_rules_for_rebuild(username), "输入用户名无效！，不能包含以下字符:/\\[]\":;|<>+=,?*") &&
+	             do_msg_for_rebuild(!is_chinese_char(username) && !is_fullwidth_char(username), "输入用户名无效！不能包含中文字符！");
+	  }
+	
+	  function validate_admin_pass_for_rebuild(password, confirm_password) {
+	      if (!g_is_allow_inject_passwd_for_rebuild) {
+	          return true;
+	      }
+	      return do_msg_for_rebuild((password.length > 0 && confirm_password.length > 0), "请输入密码！") &&
+	             do_msg_for_rebuild((password == confirm_password), "两次输入密码不同！") &&
+	             do_msg_for_rebuild(validate_passwd_rules_for_rebuild(password), "密码必须以字母开头，8-64位，同时包括字母、数字和符号!");
+	  }
+      
+      $("#rebuild_instance_form .modal-footer .btn-primary").click(function(){
+          var username = $("#id_username").val();
+          var password = $("#id_password").val();
+          var confirm_password = $("#id_confirm_password").val();
+          if (('' + g_is_allow_inject_passwd_for_rebuild) == "undefined") {
+              return false;
+          }
+      	  return validate_username_for_rebuild(username) &&
+      	         validate_admin_pass_for_rebuild(password, confirm_password);
+      });
+    });
+</script>
+
+<div class="right">
+  <h3>{% trans "Description:" %}</h3>
+  <p>{% trans "Select the image to rebuild your instance." %}</p>
+  {% if can_set_server_password %}
+  <p>{% trans "You may optionally set a password on the rebuilt instance." %}</p>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block modal-footer %}
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Confirm" %}" />
+  <a href="{% url "horizon:instances:instances:index" %}" class="btn btn-default secondary cancel close">{% trans "Cancel" %}</a>
+{% endblock %}

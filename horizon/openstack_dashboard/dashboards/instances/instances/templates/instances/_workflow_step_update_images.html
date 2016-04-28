@@ -1,0 +1,97 @@
+{% load i18n %}
+
+{% block css %}
+    <style>
+
+    .label-warning{
+        background-color: #ffb52e;
+        padding: 10px 8px;
+        font-weight: normal;
+        text-decoration: none;
+        active{
+             text-decoration: none;
+         }
+
+    }
+
+    .label-default{
+        background-color: #fffbf2;
+        color: #b2b2b2;
+        padding: 10px 8px;
+        margin-left:46px;
+        font-weight: normal;
+    }
+
+    .workflow.wizard .row .btn {
+        float: none;
+        margin: 1px 5px 0px 0px;
+    }
+
+
+    </style>
+{% endblock %}
+
+<noscript><h3>{{ step }}</h3></noscript>
+
+<div class="membership {{ step.slug }}_membership dropdown_fix" data-show-roles="{{ step.show_roles }}">
+  <div class="header">
+      <div class="row">
+        <div class="col-xs-7 filterable {{ step.slug }}_filterable" id="instance-config">
+            <div class="provider all-provider">
+                <label>镜像类型</label>
+                <a class="provider-filter" data-val="public" href="#"><span id="public" class="label label-warning">{% trans "public image" %}</span></a>
+                <a class="provider-filter" data-val="custom" href="#"><span id="custom" class="label label-default">我的私有镜像</span></a>
+            </div>
+            <div id="custom_image"></div>
+         <div class="provider system-provider-sys" style="display: block;">
+         <label style="margin-right: 20px;">{% trans "operating system" %}</label>
+         <a class="btn provider-filter active" title="" data-val="CentOS" data-placement="top"  data-toggle="tooltip" data-original-title="CentOS" href="#"><span id="CentOS" class="os-family os-centos"></span></a>
+         <a class="btn provider-filter" title="" data-val="Debian" data-placement="top"  data-toggle="tooltip" data-original-title="Debian" href="#"><span id="Debian" class="os-family os-debian"></span></a>
+         <a class="btn provider-filter" title="" data-val="Ubuntu" data-placement="top"  data-toggle="tooltip" data-original-title="Ubuntu" href="#"><span id="Ubuntu" class="os-family os-ubuntu"></span></a>
+         <a class="btn provider-filter" title="" data-val="SUSE" data-placement="top"  data-toggle="tooltip" data-original-title="SUSE" href="#"><span id="SUSE" class="os-family os-suse"></span></a>
+         <a class="btn provider-filter" title="" data-val="RHEL" data-placement="top"  data-toggle="tooltip" data-original-title="Redhat" href="#"><span id="RHEL" class="os-family os-redhat"></span></a>
+         <a class="btn provider-filter" title="" data-val="Windows" data-placement="top"  data-toggle="tooltip" data-original-title="Windows" href="#"><span id="Windows" class="os-family os-windows"></span></a>
+         <a class="btn provider-filter" title="" data-val="other" data-placement="top"  data-toggle="tooltip" data-original-title={% trans "other" %} href="#"><span id="other" class="os-family os-other"></span></a>
+     </div>
+      <div class="fake_table fake_{{ step.slug }}_table" id="available_{{ step.slug }}" >
+        <ul class="available_members available_{{ step.slug }}"></ul>
+        <ul id="no_available_{{ step.slug }}" style="margin: 0 0 7px 100px;"><li>{% trans 'No images found' %}</li></ul>
+      </div>
+    </div>
+          <div class="col-xs-5" style="float: right; padding: 20px; width: 360px; position: absolute; right: 20px; top: 0px;">
+            <h4>{% trans "Configuration Details" %}</h4>
+              <table class="table flavor_table table-bordered datatable">
+                  <tbody>
+                    <tr><td class="flavor_name">{% trans "Image" %}</td><td><div calss="flavor_Image">
+                        <a  href="#" data-original-title="test" data-toggle="tooltip" data-placement="top" data-val="" title="" class="provider-filter"
+                            style="text-decoration:underline;">gaga</a>
+                    </div></td></tr>
+                    <tr><td class="flavor_name">{% trans "VCPUs" %}</td><td><span id="flavor_vcpus" class="flavor_vcpus"></span>{% trans 'core' %}</td></tr>
+                    <tr><td class="flavor_name">{% trans "RAM" %}</td><td><span id="flavor_ram" calss="flavor_ram"></span></td></tr>
+                    <tr><td class="flavor_name">{% trans "System Drive" %}</td><td><span id="flavor_system_drive" calss="flavor_system_drive"></span></td></tr>
+                    <tr><td class="flavor_name">{% trans "Cloud Drive" %}</td><td><span id="flavor_cloud_drive" class="flavor_cloud_drive"></span>GB</td></tr>
+                    <tr><td class="flavor_name">{% trans "Floating IP" %}</td><td><span id="floating_ip" class="floating_ip"></span></td></tr>
+                    <tr><td class="flavor_name">{% trans "Counts" %}</td><td><span id="flavor_count" class="flavor_count"></span></tr>
+                  </tbody>
+              </table>
+              <h4><span class="total">{% trans "Total" %}:</span>
+                  <span class="price"><span class="currency">¥</span><span id="price"></span></span><span class="unit">{% trans "Per Hour" %}</span>
+                  <span class="none">(<span class="small-price"><span class="currency">¥</span><span id="mon_price"></span></span>{% trans "Per Month" %})</span>
+              </h4>
+            </div>
+      </div>
+    </div>
+  </div>
+<div style="height: 0px">
+  {% include "horizon/common/_form_fields.html" %}
+</div>
+
+<script>
+  if (typeof horizon.membership !== 'undefined') {
+    horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+  } else {
+    addHorizonLoadEvent(function() {
+      horizon.membership.workflow_init($(".workflow"), "{{ step.slug }}", "{{ step.get_id }}");
+    });
+  }
+</script>
